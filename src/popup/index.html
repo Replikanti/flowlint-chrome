@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/icon-32.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlowLint</title>
+    <style>
+      body { font-family: sans-serif; padding: 10px; }
+      #error-console { color: red; font-size: 12px; white-space: pre-wrap; border: 1px solid red; padding: 10px; margin-top: 10px; display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div style="padding: 20px; text-align: center;">Loading FlowLint...</div>
+    </div>
+    <div id="error-console"></div>
+    
+    <script>
+      // Early error catcher
+      window.addEventListener('error', function(e) {
+        var consoleDiv = document.getElementById('error-console');
+        consoleDiv.style.display = 'block';
+        consoleDiv.innerText += 'Global Error: ' + e.message + '\n' + (e.error ? e.error.stack : '') + '\n---\n';
+      });
+      
+      window.addEventListener('unhandledrejection', function(e) {
+        var consoleDiv = document.getElementById('error-console');
+        consoleDiv.style.display = 'block';
+        consoleDiv.innerText += 'Unhandled Rejection: ' + e.reason + '\n---\n';
+      });
+    </script>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles for the popup (if used) */
+body {
+  @apply bg-white text-zinc-900;
+}

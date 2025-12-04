@@ -1,0 +1,27 @@
+@tailwind components;
+@tailwind utilities;
+
+/* Scoped base styles just for the widget */
+:host {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  line-height: 1.5;
+  color: #18181b; /* zinc-900 */
+}
+
+/* Reset specific elements within our shadow root */
+div, button, h1, h2, h3, p, span, a {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+button {
+  cursor: pointer;
+  background: transparent;
+}
+
+/* Dark mode support via host context */
+:host(.dark) {
+  color: #f4f4f5; /* zinc-100 */
+}
