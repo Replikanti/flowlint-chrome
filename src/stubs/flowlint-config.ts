@@ -42,10 +42,22 @@ export const defaultConfig = {
     config_literals: {
       enabled: true,
       denylist_regex: [
-        '(?i)\b(dev|development)\b',
-        '(?i)\b(stag|staging)\b',
-        '(?i)\b(prod|production)\b',
-        '(?i)\b(test|testing)\b',
+        '(?i)\\b(dev|development)\\b',
+        '(?i)\\b(stag|staging)\\b',
+        '(?i)\\b(prod|production)\\b',
+        '(?i)\\b(test|testing)\\b',
+      ],
+    },
+    webhook_acknowledgment: {
+      enabled: true,
+      heavy_node_types: [
+        'n8n-nodes-base.httpRequest',
+        'n8n-nodes-base.postgres',
+        'n8n-nodes-base.mysql',
+        'n8n-nodes-base.mongodb',
+        'n8n-nodes-base.openAi',
+        'n8n-nodes-base.anthropic',
+        'n8n-nodes-base.huggingFace',
       ],
     },
   },
