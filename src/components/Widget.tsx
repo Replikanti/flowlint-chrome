@@ -4,6 +4,7 @@ import { BrowserStringSource, BrowserStaticConfig, InMemoryReporter } from '../a
 import { AlertCircle, CheckCircle, AlertTriangle, Info, XCircle, Play, ExternalLink, ClipboardPaste, X, Minimize2, Maximize2, Eraser, ScanLine } from 'lucide-react';
 import type { Finding } from '@flowlint/review/types';
 import type { AnalysisResult } from '@flowlint/review/providers';
+import { ExportPanel } from './ExportPanel';
 
 export const Widget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -166,26 +167,33 @@ export const Widget = () => {
                
                {/* Results View */}
                {results ? (
-                  <div className="space-y-3">
-                     <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
-                           Found {results.flatMap(r => r.findings).length} issues
-                        </h3>
-                        <button onClick={() => setResults(null)} className="text-xs text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 hover:underline font-medium flex items-center gap-1 transition-colors">
-                           <Eraser className="w-3 h-3" /> Clear Results
-                        </button>
-                     </div>
-                     
-                     {results.flatMap(r => r.findings).length === 0 && !error ? (
-                        <div className="flex flex-col items-center justify-center h-40 text-zinc-400 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50 dark:bg-zinc-900/50">
-                           <CheckCircle className="w-12 h-12 text-green-500 mb-3" />
-                           <p className="font-bold text-zinc-700 dark:text-zinc-200">All checks passed!</p>
-                           <p className="text-xs text-zinc-500">Your workflow looks solid.</p>
+                  <div className="flex flex-col h-full">
+                     <div className="flex-1 overflow-y-auto space-y-3">
+                        <div className="flex items-center justify-between mb-2">
+                           <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
+                              Found {results.flatMap(r => r.findings).length} issues
+                           </h3>
+                           <button onClick={() => setResults(null)} className="text-xs text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 hover:underline font-medium flex items-center gap-1 transition-colors">
+                              <Eraser className="w-3 h-3" /> Clear Results
+                           </button>
                         </div>
-                     ) : (
-                        results.flatMap(r => r.findings)
-                        .sort((a,b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity))
-                        .map((f, i) => <FindingCard key={i} finding={f} />)
+
+                        {results.flatMap(r => r.findings).length === 0 && !error ? (
+                           <div className="flex flex-col items-center justify-center h-40 text-zinc-400 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50 dark:bg-zinc-900/50">
+                              <CheckCircle className="w-12 h-12 text-green-500 mb-3" />
+                              <p className="font-bold text-zinc-700 dark:text-zinc-200">All checks passed!</p>
+                              <p className="text-xs text-zinc-500">Your workflow looks solid.</p>
+                           </div>
+                        ) : (
+                           results.flatMap(r => r.findings)
+                           .sort((a,b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity))
+                           .map((f, i) => <FindingCard key={i} finding={f} />)
+                        )}
+                     </div>
+
+                     {/* Export Panel - only show if we have results */}
+                     {results.flatMap(r => r.findings).length > 0 && (
+                        <ExportPanel results={results} workflowName="n8n-workflow" />
                      )}
                   </div>
                ) : (
