@@ -60,6 +60,11 @@ export const defaultConfig = {
         'n8n-nodes-base.huggingFace',
       ],
     },
+    retry_after_compliance: {
+      enabled: true,
+      suggest_exponential_backoff: true,
+      suggest_jitter: true,
+    },
   },
 };
 
