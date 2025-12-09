@@ -345,9 +345,20 @@ export const Widget = () => {
                <span className="text-[10px] text-zinc-600 dark:text-zinc-400 font-medium">
                   FlowLint ready
                </span>
-               <span className="text-[9px] text-zinc-400 dark:text-zinc-600 font-mono">
-                  v{chrome.runtime.getManifest().version}
-               </span>
+               <div className="flex items-center gap-2">
+                 <a
+                   href="https://flowlint.dev/support"
+                   target="_blank"
+                   rel="noreferrer noopener"
+                   className="text-[10px] text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-200 font-semibold inline-flex items-center gap-1"
+                 >
+                   Support
+                   <ExternalLink className="w-3 h-3" />
+                 </a>
+                 <span className="text-[9px] text-zinc-400 dark:text-zinc-600 font-mono">
+                    v{chrome.runtime.getManifest().version}
+                 </span>
+               </div>
             </div>
          </div>
       )}
