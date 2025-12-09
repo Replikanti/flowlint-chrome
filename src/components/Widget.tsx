@@ -261,17 +261,9 @@ export const Widget = () => {
 
             {/* Footer - always visible */}
             <div className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 px-3 py-1.5 flex items-center justify-between">
-               <div className="flex items-center gap-1.5">
-                  <div className="relative flex items-center">
-                     <span className="flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                     </span>
-                  </div>
-                  <span className="text-[9px] text-zinc-500 dark:text-zinc-500 font-medium">
-                     Active
-                  </span>
-               </div>
+               <span className="text-[10px] text-zinc-600 dark:text-zinc-400 font-medium">
+                  FlowLint ready
+               </span>
                <span className="text-[9px] text-zinc-400 dark:text-zinc-600 font-mono">
                   v{chrome.runtime.getManifest().version}
                </span>
