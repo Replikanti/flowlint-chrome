@@ -71,7 +71,8 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
 
     // Check Logic
     const checkUrl = () => {
-        const match = window.location.href.includes('/workflow/');
+        // Show on all pages for testing
+        const match = true;
         // If we match, show. If not, hide.
         // We use functional update to avoid dependency loops if we were to use useCallback
         setIsVisible(match);
