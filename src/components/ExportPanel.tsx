@@ -5,6 +5,7 @@ import {
   analysisResultsToRun,
   formatStylish,
   formatJson,
+  formatCsv,
   formatSarif,
   formatJunit,
   formatGithubActionsLog,
@@ -46,8 +47,8 @@ export const ExportPanel = ({ results, workflowName = 'workflow' }: ExportPanelP
         </p>
       </div>
 
-      {/* Compact grid - 3 columns */}
-      <div className="grid grid-cols-3 gap-1.5">
+      {/* Compact grid */}
+      <div className="grid grid-cols-4 gap-1.5">
         {/* Copy buttons */}
         <button
           onClick={() => handleCopy('stylish', formatStylish(run))}
@@ -103,6 +104,42 @@ export const ExportPanel = ({ results, workflowName = 'workflow' }: ExportPanelP
           )}
         </button>
 
+        <button
+          onClick={() => handleCopy('json', formatJson(run))}
+          className="flex flex-col items-center gap-1 px-2 py-1.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded text-[10px] font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+          title="Copy as JSON"
+        >
+          {copiedFormat === 'json' ? (
+            <>
+              <CheckCircle className="w-3.5 h-3.5 text-green-600" />
+              <span>Copied!</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5" />
+              <span>JSON</span>
+            </>
+          )}
+        </button>
+
+        <button
+          onClick={() => handleCopy('csv', formatCsv(run))}
+          className="flex flex-col items-center gap-1 px-2 py-1.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded text-[10px] font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+          title="Copy as CSV"
+        >
+          {copiedFormat === 'csv' ? (
+            <>
+              <CheckCircle className="w-3.5 h-3.5 text-green-600" />
+              <span>Copied!</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5" />
+              <span>CSV</span>
+            </>
+          )}
+        </button>
+
         {/* Download buttons */}
         <button
           onClick={() => handleDownload(formatJson(run), 'flowlint-report.json', 'application/json')}
@@ -111,6 +148,15 @@ export const ExportPanel = ({ results, workflowName = 'workflow' }: ExportPanelP
         >
           <Download className="w-3.5 h-3.5" />
           <span>JSON</span>
+        </button>
+
+        <button
+          onClick={() => handleDownload(formatCsv(run), 'flowlint-report.csv', 'text/csv')}
+          className="flex flex-col items-center gap-1 px-2 py-1.5 bg-brand-500 hover:bg-brand-600 border border-brand-600 dark:border-brand-700 rounded text-[10px] font-bold text-white transition-colors"
+          title="Download as CSV"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>CSV</span>
         </button>
 
         <button

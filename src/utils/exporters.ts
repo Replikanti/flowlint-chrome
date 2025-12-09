@@ -100,6 +100,34 @@ export function formatJson(run: FlowLintRun): string {
 }
 
 /* ------------------------------------------------------------------ */
+/* FORMATTER - CSV (COPY/DOWNLOAD)                                     */
+/* ------------------------------------------------------------------ */
+
+function csvEscape(value: string | number | undefined | null): string {
+  if (value === undefined || value === null) return '';
+  const str = String(value);
+  if (str.includes('"') || str.includes(',') || str.includes('\n')) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+export function formatCsv(run: FlowLintRun): string {
+  const headers = ['workflow', 'severity', 'rule', 'message', 'nodeId', 'line'];
+  const rows = run.findings.map((f) =>
+    [
+      csvEscape(run.meta.workflowName),
+      csvEscape(f.severity),
+      csvEscape(f.rule),
+      csvEscape(f.message),
+      csvEscape(f.nodeId),
+      csvEscape(f.line)
+    ].join(',')
+  );
+  return [headers.join(','), ...rows].join('\n');
+}
+
+/* ------------------------------------------------------------------ */
 /* FORMATTER - SARIF 2.1.0 (DOWNLOAD)                                  */
 /* ------------------------------------------------------------------ */
 
