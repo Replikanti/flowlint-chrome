@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { DefaultAnalysisEngine } from '@flowlint/review/analysis-engine';
 import { BrowserStringSource, BrowserStaticConfig, InMemoryReporter } from '../adapters/browser-providers';
-import { AlertCircle, CheckCircle, AlertTriangle, Info, XCircle, Play, ExternalLink, ClipboardPaste, X, Minimize2, Maximize2, Eraser, ScanLine } from 'lucide-react';
+import { AlertCircle, CheckCircle, AlertTriangle, Info, XCircle, Play, ExternalLink, ClipboardPaste, X, Minimize2, Maximize2, Eraser, ScanLine, ChevronDown, ChevronRight } from 'lucide-react';
 import type { Finding } from '@flowlint/review/types';
 import type { AnalysisResult } from '@flowlint/review/providers';
+import { ExportPanel } from './ExportPanel';
 
 export const Widget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   
   const [input, setInput] = useState('');
   const [results, setResults] = useState<AnalysisResult[] | null>(null);
@@ -100,6 +102,42 @@ export const Widget = () => {
   };
 
   // -- Render Helpers --
+  const severityOrder: Finding['severity'][] = ['must', 'should', 'nit'];
+  const severityLabels: Record<Finding['severity'], string> = {
+    must: 'Must-fix',
+    should: 'Should-fix',
+    nit: 'Nitpicks'
+  };
+
+  const findings = useMemo(() => results ? results.flatMap(r => r.findings) : [], [results]);
+  const sortedFindings = useMemo(() => [...findings].sort((a, b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity)), [findings]);
+  const groupedFindings = useMemo(() => (
+    severityOrder
+      .map(severity => ({
+        severity,
+        items: sortedFindings.filter(f => f.severity === severity)
+      }))
+      .filter(group => group.items.length > 0)
+  ), [sortedFindings]);
+  const counts = useMemo(() => ({
+    must: findings.filter(f => f.severity === 'must').length,
+    should: findings.filter(f => f.severity === 'should').length,
+    nit: findings.filter(f => f.severity === 'nit').length,
+  }), [findings]);
+
+  const toggleGroup = (severity: string) => {
+    setCollapsedGroups(prev => ({ ...prev, [severity]: !prev[severity] }));
+  };
+
+  const collapseAllGroups = () => {
+    const next = severityOrder.reduce((acc, sev) => ({ ...acc, [sev]: true }), {} as Record<string, boolean>);
+    setCollapsedGroups(next);
+  };
+
+  const expandAllGroups = () => {
+    const next = severityOrder.reduce((acc, sev) => ({ ...acc, [sev]: false }), {} as Record<string, boolean>);
+    setCollapsedGroups(next);
+  };
 
   if (!isOpen) {
     return (
@@ -161,35 +199,84 @@ export const Widget = () => {
                </div>
             )}
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4">
-               
-               {/* Results View */}
-               {results ? (
-                  <div className="space-y-3">
-                     <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
-                           Found {results.flatMap(r => r.findings).length} issues
-                        </h3>
-                        <button onClick={() => setResults(null)} className="text-xs text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 hover:underline font-medium flex items-center gap-1 transition-colors">
-                           <Eraser className="w-3 h-3" /> Clear Results
-                        </button>
+            {/* Content - scrollable findings area */}
+            {results ? (
+               <>
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                    <div className="sticky top-0 z-20 -mx-4 px-4 py-2 bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
+                             Found {findings.length} issues
+                          </h3>
+                          <div className="flex items-center gap-2 text-[10px] text-zinc-500 dark:text-zinc-400">
+                            <span>Must {counts.must}</span>
+                            <span>Should {counts.should}</span>
+                            <span>Nit {counts.nit}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={collapseAllGroups}
+                            className="text-[10px] text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium border border-zinc-200 dark:border-zinc-700 rounded px-2 py-1 transition-colors"
+                          >
+                            Collapse all
+                          </button>
+                          <button
+                            onClick={expandAllGroups}
+                            className="text-[10px] text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium border border-zinc-200 dark:border-zinc-700 rounded px-2 py-1 transition-colors"
+                          >
+                            Expand all
+                          </button>
+                          <button onClick={() => setResults(null)} className="text-xs text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 hover:underline font-medium flex items-center gap-1 transition-colors">
+                             <Eraser className="w-3 h-3" /> Clear Results
+                          </button>
+                        </div>
                      </div>
-                     
-                     {results.flatMap(r => r.findings).length === 0 && !error ? (
+
+                     {findings.length === 0 && !error ? (
                         <div className="flex flex-col items-center justify-center h-40 text-zinc-400 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50 dark:bg-zinc-900/50">
                            <CheckCircle className="w-12 h-12 text-green-500 mb-3" />
                            <p className="font-bold text-zinc-700 dark:text-zinc-200">All checks passed!</p>
                            <p className="text-xs text-zinc-500">Your workflow looks solid.</p>
                         </div>
                      ) : (
-                        results.flatMap(r => r.findings)
-                        .sort((a,b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity))
-                        .map((f, i) => <FindingCard key={i} finding={f} />)
+                        groupedFindings.map(group => {
+                          const collapsed = collapsedGroups[group.severity] ?? false;
+                          return (
+                            <div key={group.severity} className="border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
+                              <button
+                                className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+                                onClick={() => toggleGroup(group.severity)}
+                              >
+                                <div className="flex items-center gap-2">
+                                  {collapsed ? <ChevronRight className="w-4 h-4 text-zinc-500" /> : <ChevronDown className="w-4 h-4 text-zinc-500" />}
+                                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 ${getSeverityColor(group.severity)}`}>
+                                    {group.severity}
+                                  </span>
+                                  <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+                                    {severityLabels[group.severity]} ({group.items.length})
+                                  </span>
+                                </div>
+                              </button>
+                              {!collapsed && (
+                                <div className="p-2 space-y-2">
+                                  {group.items.map((f, i) => <FindingCard key={`${group.severity}-${i}`} finding={f} />)}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
                      )}
                   </div>
-               ) : (
-                  /* Empty / Input View */
+
+                  {/* Export Panel - sticky footer, always visible */}
+                  {results.flatMap(r => r.findings).length > 0 && (
+                     <ExportPanel results={results} workflowName="n8n-workflow" />
+                  )}
+               </>
+            ) : (
+               /* Empty / Input View */
+               <div className="flex-1 overflow-y-auto p-4">
                   <div className="h-full flex flex-col gap-3">
                      
                      {/* Smart Clipboard Banner */}
@@ -250,7 +337,17 @@ export const Widget = () => {
                         )}
                      </div>
                   </div>
-               )}
+               </div>
+            )}
+
+            {/* Footer - always visible */}
+            <div className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 px-3 py-1.5 flex items-center justify-between">
+               <span className="text-[10px] text-zinc-600 dark:text-zinc-400 font-medium">
+                  FlowLint ready
+               </span>
+               <span className="text-[9px] text-zinc-400 dark:text-zinc-600 font-mono">
+                  v{chrome.runtime.getManifest().version}
+               </span>
             </div>
          </div>
       )}

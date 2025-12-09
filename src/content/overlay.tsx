@@ -69,12 +69,15 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   const OverlayApp = () => {
     const [isVisible, setIsVisible] = React.useState(false);
 
+    const isN8nWorkflowPage = () => {
+      const href = window.location.href || '';
+      return href.includes('/workflow') || href.includes('/workflows');
+    };
+
     // Check Logic
     const checkUrl = () => {
-        const match = window.location.href.includes('/workflow/');
-        // If we match, show. If not, hide.
-        // We use functional update to avoid dependency loops if we were to use useCallback
-        setIsVisible(match);
+      const match = isN8nWorkflowPage();
+      setIsVisible(match);
     };
 
     React.useEffect(() => {
@@ -87,7 +90,9 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
       // Also listen to toggle messages
       const msgListener = (msg: any) => {
         if (msg.type === 'TOGGLE_WIDGET') {
-           setIsVisible(prev => !prev);
+          // Only allow toggling on n8n workflow pages
+          if (!isN8nWorkflowPage()) return;
+          setIsVisible(prev => !prev);
         }
       };
       chrome.runtime.onMessage.addListener(msgListener);
