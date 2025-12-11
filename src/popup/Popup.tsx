@@ -3,9 +3,6 @@ import { parseN8n, runAllRules, defaultConfig, type Finding } from '@replikanti/
 
 
 import { AlertCircle, CheckCircle, AlertTriangle, Info, XCircle, Play, ExternalLink, ClipboardPaste } from 'lucide-react';
-import type { Finding } from '@replikanti/flowlint-core';
-
-
 const Popup = () => {
   const [input, setInput] = useState('');
   const [results, setResults] = useState<Finding[] | null>(null);
