@@ -265,7 +265,7 @@ export const Widget = () => {
                   </div>
 
                   {/* Export Panel - sticky footer, always visible */}
-                  {results.flatMap(r => r.findings).length > 0 && (
+                  {results.length > 0 && (
                      <ExportPanel results={results} workflowName="n8n-workflow" />
                   )}
                </>

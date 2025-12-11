@@ -341,8 +341,8 @@ export function formatGithubActionsSummary(run: FlowLintRun): string {
 /* HELPER - CONVERT ANALYSIS RESULTS TO FLOWLINT RUN                   */
 /* ------------------------------------------------------------------ */
 
-export function analysisResultsToRun(results: AnalysisResult[], workflowName = 'workflow'): FlowLintRun {
-  const allFindings = results.flatMap(r => r.findings);
+export function analysisResultsToRun(results: Finding[], workflowName = 'workflow'): FlowLintRun {
+  const allFindings = results;
 
   return {
     meta: {
