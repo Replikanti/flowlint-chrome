@@ -194,13 +194,13 @@ const Popup = () => {
              </div>
              
              <div className="flex-1 overflow-y-auto pr-2 space-y-3">
-               {results.flatMap(r => r.findings).length === 0 && !error ? (
+               {results.length === 0 && !error ? (
                  <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
                     <CheckCircle className="w-12 h-12 text-green-500 mb-2" />
                     <p>No issues found! Great job.</p>
                  </div>
                ) : (
-                 results.flatMap(r => r.findings).sort((a,b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity)).map((finding, idx) => (
+                 results.sort((a,b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity)).map((finding, idx) => (
                    <FindingCard key={idx} finding={finding} />
                  ))
                )}
