@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
-import { DefaultAnalysisEngine } from '@flowlint/review/analysis-engine';
-import { BrowserStringSource, BrowserStaticConfig, InMemoryReporter } from '../adapters/browser-providers';
+import { parseN8n, runAllRules, defaultConfig } from '@replikanti/flowlint-core';
+
+
 import { AlertCircle, CheckCircle, AlertTriangle, Info, XCircle, Play, ExternalLink, ClipboardPaste, X, Minimize2, Maximize2, Eraser, ScanLine, ChevronDown, ChevronRight } from 'lucide-react';
-import type { Finding } from '@flowlint/review/types';
-import type { AnalysisResult } from '@flowlint/review/providers';
+import type { Finding } from '@replikanti/flowlint-core';
+
 import { ExportPanel } from './ExportPanel';
 
 export const Widget = () => {
@@ -12,7 +13,7 @@ export const Widget = () => {
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   
   const [input, setInput] = useState('');
-  const [results, setResults] = useState<AnalysisResult[] | null>(null);
+  const [results, setResults] = useState<Finding[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [clipboardWorkflow, setClipboardWorkflow] = useState<string | null>(null);
@@ -73,22 +74,16 @@ export const Widget = () => {
     setResults(null);
     
     try {
-      const source = new BrowserStringSource(jsonContent);
-      const config = new BrowserStaticConfig();
-      const reporter = new InMemoryReporter();
       
-      const engine = new DefaultAnalysisEngine(source, config, reporter);
-      const summary = await engine.analyze();
       
-      setResults(reporter.results);
       
-      if (summary.errors > 0) {
-          const parseError = reporter.results.find(r => r.errors && r.errors.length > 0);
-          if (parseError && parseError.errors) {
-             setError(`Parsing Failed: ${parseError.errors[0].error}`);
-          }
-      }
-    } catch (err) {
+      
+      const graph = parseN8n(jsonContent);
+      const findings = runAllRules(graph, { cfg: defaultConfig, path: 'clipboard.json', nodeLines: graph.meta.nodeLines as Record<string, number> | undefined });
+      
+      setResults(findings);
+      
+      } catch (err) {
        console.error(err);
        setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
@@ -109,7 +104,7 @@ export const Widget = () => {
     nit: 'Nitpicks'
   };
 
-  const findings = useMemo(() => results ? results.flatMap(r => r.findings) : [], [results]);
+  const findings = useMemo(() => results || [], [results]);
   const sortedFindings = useMemo(() => [...findings].sort((a, b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity)), [findings]);
   const groupedFindings = useMemo(() => (
     severityOrder
