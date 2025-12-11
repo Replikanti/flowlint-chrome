@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Download, Copy, CheckCircle } from 'lucide-react';
-import type { AnalysisResult } from '@flowlint/review/providers';
+import type { Finding } from '@replikanti/flowlint-core';
 import {
   analysisResultsToRun,
   formatStylish,
@@ -15,7 +15,7 @@ import {
 } from '../utils/exporters';
 
 interface ExportPanelProps {
-  results: AnalysisResult[];
+  results: Finding[];
   workflowName?: string;
 }
 
