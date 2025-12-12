@@ -9,9 +9,9 @@
                     "preview":  "vite preview"
                 },
     "dependencies":  {
-                         "react-dom":  "^18.3.1",
+                         "react-dom":  "^19.0.0",
                          "ajv-draft-04":  "^1.0.0",
-                         "react":  "^18.3.1",
+                         "react":  "^19.0.0",
                          "clsx":  "^2.1.1",
                          "yaml":  "^2.4.0",
                          "tailwindcss-animate":  "^1.0.7",
@@ -27,8 +27,8 @@
                             "@crxjs/vite-plugin":  "^2.3.0",
                             "@types/chrome":  "^0.1.0",
                             "@types/node":  "^24.0.0",
-                            "@types/react":  "^18.3.1",
-                            "@types/react-dom":  "^18.3.1",
+                            "@types/react":  "^19.0.0",
+                            "@types/react-dom":  "^19.0.0",
                             "@vitejs/plugin-react":  "^5.0.0",
                             "autoprefixer":  "^10.4.20",
                             "postcss":  "^8.4.49",
