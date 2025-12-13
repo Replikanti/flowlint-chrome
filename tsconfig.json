@@ -23,8 +23,7 @@
     /* Paths */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@flowlint/review/*": ["../flowlint-app/packages/review/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],
