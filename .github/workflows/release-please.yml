@@ -19,6 +19,10 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
+      - name: Checkout Code
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
+
       - name: Polish Release Notes
         if: ${{ steps.release.outputs.release_created }}
         env:
