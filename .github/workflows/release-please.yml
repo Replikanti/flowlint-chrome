@@ -19,6 +19,16 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
+      - name: Polish Release Notes
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ steps.release.outputs.tag_name }}
+        run: |
+          npm install openai @octokit/rest tsx
+          npx tsx scripts/polish-release-notes.ts
+
       - name: Generate Token
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
