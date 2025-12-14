@@ -1,39 +1,40 @@
 {
-    "name":  "flowlint-chrome",
-    "private":  true,
-    "version":  "0.7.0",
-    "type":  "module",
-    "scripts":  {
-                    "dev":  "vite",
-                    "build":  "tsc \u0026\u0026 vite build",
-                    "preview":  "vite preview"
-                },
-    "dependencies":  {
-                         "react-dom":  "^19.0.0",
-                         "ajv-draft-04":  "^1.0.0",
-                         "react":  "^19.0.0",
-                         "clsx":  "^2.1.1",
-                         "yaml":  "^2.4.0",
-                         "tailwindcss-animate":  "^1.0.7",
-                         "@types/micromatch":  "^4.0.10",
-                         "tailwind-merge":  "^2.6.0",
-                         "@replikanti/flowlint-core":  "^0.7.0",
-                         "ajv":  "^8.17.1",
-                         "ajv-formats":  "^3.0.1",
-                         "lucide-react":  "^0.560.0",
-                         "micromatch":  "^4.0.8"
-                     },
-    "devDependencies":  {
-                            "@crxjs/vite-plugin":  "2.3.0",
-                            "@types/chrome":  "0.1.32",
-                            "@types/node":  "24.10.3",
-                            "@types/react":  "19.2.7",
-                            "@types/react-dom":  "19.2.3",
-                            "@vitejs/plugin-react":  "5.1.2",
-                            "autoprefixer":  "10.4.22",
-                            "postcss":  "8.5.6",
-                            "tailwindcss":  "4.1.18",
-                            "typescript":  "5.9.3",
-                            "vite":  "7.2.7"
-                        }
+    "name": "flowlint-chrome",
+    "private": true,
+    "version": "0.7.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@replikanti/flowlint-core": "^0.7.0",
+        "@types/micromatch": "^4.0.10",
+        "ajv": "^8.17.1",
+        "ajv-draft-04": "^1.0.0",
+        "ajv-formats": "^3.0.1",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.560.0",
+        "micromatch": "^4.0.8",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "tailwind-merge": "^2.6.0",
+        "tailwindcss-animate": "^1.0.7",
+        "yaml": "^2.4.0"
+    },
+    "devDependencies": {
+        "@crxjs/vite-plugin": "2.3.0",
+        "@types/chrome": "0.1.32",
+        "@types/node": "24.10.3",
+        "@types/react": "19.2.7",
+        "@types/react-dom": "19.2.3",
+        "@vitejs/plugin-react": "5.1.2",
+        "autoprefixer": "10.4.22",
+        "openai": "^6.10.0",
+        "postcss": "8.5.6",
+        "tailwindcss": "4.1.18",
+        "typescript": "5.9.3",
+        "vite": "7.2.7"
+    }
 }
