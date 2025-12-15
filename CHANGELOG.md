@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.1](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.0...flowlint-chrome-v0.8.1) (2025-12-15)
+
+
+### Bug Fixes
+
+* **ci:** correct repository name for chrome extension upload action ([3ccc7d9](https://github.com/Replikanti/flowlint-chrome/commit/3ccc7d9f1b07f6df8010063a99db4b0e17b2214f))
+* retry chrome release with fixed upload action ([71cb9eb](https://github.com/Replikanti/flowlint-chrome/commit/71cb9eb284ef073fed9ef82af8458adfbbfbfc32))
+
 ## [0.8.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.7.0...flowlint-chrome-v0.8.0) (2025-12-15)
 
 
