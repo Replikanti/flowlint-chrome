@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.2...flowlint-chrome-v0.8.3) (2025-12-15)
+
+
+### Bug Fixes
+
+* final chrome publish test ([53a7d7f](https://github.com/Replikanti/flowlint-chrome/commit/53a7d7fcb1f0b4cb3842dc755c0a6d8810e68501))
+
 ## [0.8.2](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.1...flowlint-chrome-v0.8.2) (2025-12-15)
 
 
