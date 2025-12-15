@@ -43,27 +43,9 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   }
   shadow.appendChild(rootContainer);
 
-  // --- 1. Global History Patching (Outside React) ---
-  // This ensures we catch URL changes even in SPA mode without re-patching on every render
-  const originalPushState = history.pushState;
-  const originalReplaceState = history.replaceState;
-
-  const notifyUrlChanged = () => {
-    window.dispatchEvent(new CustomEvent('flowlint-url-changed'));
-  };
-
-  history.pushState = function(...args) {
-    originalPushState.apply(this, args);
-    notifyUrlChanged();
-  };
-
-  history.replaceState = function(...args) {
-    originalReplaceState.apply(this, args);
-    notifyUrlChanged();
-  };
-
-  window.addEventListener('popstate', notifyUrlChanged);
-
+  // --- 1. Global History Patching REMOVED ---
+  // We now rely on background script messaging for URL changes to avoid polluting global scope
+  // and ensuring better compatibility with n8n SPA router.
 
   // --- 2. React Component ---
   const OverlayApp = () => {
@@ -83,22 +65,21 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
     React.useEffect(() => {
       // Initial check
       checkUrl();
-
-      // Listen to our custom event
-      window.addEventListener('flowlint-url-changed', checkUrl);
       
-      // Also listen to toggle messages
+      // Listen to messages from background script
       const msgListener = (msg: any) => {
         if (msg.type === 'TOGGLE_WIDGET') {
           // Only allow toggling on n8n workflow pages
           if (!isN8nWorkflowPage()) return;
           setIsVisible(prev => !prev);
         }
+        if (msg.type === 'URL_CHANGED') {
+          checkUrl();
+        }
       };
       chrome.runtime.onMessage.addListener(msgListener);
 
       return () => {
-        window.removeEventListener('flowlint-url-changed', checkUrl);
         chrome.runtime.onMessage.removeListener(msgListener);
       };
     }, []);
