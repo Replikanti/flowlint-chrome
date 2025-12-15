@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.1...flowlint-chrome-v0.10.2) (2025-12-15)
+
+
+### Bug Fixes
+
+* **sonar:** remove history API monkey patching and use background messages for navigation ([1e23bd2](https://github.com/Replikanti/flowlint-chrome/commit/1e23bd216cff55094834911f6257561ef6c31766))
+
 ## [0.10.1](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.0...flowlint-chrome-v0.10.1) (2025-12-15)
 
 
