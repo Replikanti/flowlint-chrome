@@ -28,7 +28,7 @@ jobs:
 
       - name: Checkout Code
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Polish Release Notes
         if: ${{ steps.release.outputs.release_created }}
@@ -80,7 +80,7 @@ jobs:
           cd dist && zip -r ../extension.zip .
 
       - name: Upload to Chrome Web Store
-        uses: mnao305/chrome-extension-upload@v5.0.0
+        uses: mnao305/chrome-extension-upload@4008e29e13c144d0f6725462cbd49b7c291b4928 # v5.0.0
         with:
           file-path: extension.zip
           extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
