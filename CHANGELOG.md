@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.1...flowlint-chrome-v0.8.2) (2025-12-15)
+
+
+### Bug Fixes
+
+* **ci:** switch to mnao305/chrome-extension-upload action due to resolution error ([1accd60](https://github.com/Replikanti/flowlint-chrome/commit/1accd603864b1af643114fab0d75315934b1b90d))
+
 ## [0.8.1](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.0...flowlint-chrome-v0.8.1) (2025-12-15)
 
 
