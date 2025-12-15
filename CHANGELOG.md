@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.4...flowlint-chrome-v0.9.0) (2025-12-15)
+
+
+### Features
+
+* trigger chrome release after build fixes ([780fafe](https://github.com/Replikanti/flowlint-chrome/commit/780fafea09e64e0464e32406ec73564708b75d5f))
+
 ## [0.8.4](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.3...flowlint-chrome-v0.8.4) (2025-12-15)
 
 
