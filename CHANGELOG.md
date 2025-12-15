@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.4](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.3...flowlint-chrome-v0.8.4) (2025-12-15)
+
+
+### Bug Fixes
+
+* **build:** migrate to @tailwindcss/postcss for compatibility ([d36a4ea](https://github.com/Replikanti/flowlint-chrome/commit/d36a4eaaa9c45e19764c4d0f49c5e445d96051fb))
+* **build:** use @tailwindcss/postcss in postcss config ([f4e7970](https://github.com/Replikanti/flowlint-chrome/commit/f4e7970bc71c5b3ad02275ac0611c3fb1af2142b))
+
 ## [0.8.3](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.8.2...flowlint-chrome-v0.8.3) (2025-12-15)
 
 
