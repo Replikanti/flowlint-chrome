@@ -80,11 +80,11 @@ jobs:
           cd dist && zip -r ../extension.zip .
 
       - name: Upload to Chrome Web Store
-        uses: passifer/chrome-extension-upload-action@1.4.1
+        uses: mnao305/chrome-extension-upload@v5.0.0
         with:
-          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          file-path: extension.zip
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
-          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
-          file-name: extension.zip
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
           publish: true
