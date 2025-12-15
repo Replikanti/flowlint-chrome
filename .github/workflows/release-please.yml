@@ -19,6 +19,13 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
+      - name: Trigger Automerge
+        if: ${{ !steps.release.outputs.release_created }}
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3
+        with:
+          token: ${{ secrets.AUTO_APPROVE_PAT }}
+          event-type: automerge-release
+
       - name: Checkout Code
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/checkout@v4
