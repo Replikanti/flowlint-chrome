@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.3](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.2...flowlint-chrome-v0.10.3) (2025-12-16)
+
+
+### Bug Fixes
+
+* **ci:** add standard CI workflow for PR checks ([033f4df](https://github.com/Replikanti/flowlint-chrome/commit/033f4df3386bc66cf912b8a29382275428bfd5ec))
+* **ci:** unify CI workflows ([fe18cbc](https://github.com/Replikanti/flowlint-chrome/commit/fe18cbc3a9c498d9318ec11add6f37dd3407a3c4))
+
+## [0.10.2](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.1...flowlint-chrome-v0.10.2) (2025-12-15)
+
+
+### Bug Fixes
+
+* **sonar:** remove history API monkey patching and use background messages for navigation ([1e23bd2](https://github.com/Replikanti/flowlint-chrome/commit/1e23bd216cff55094834911f6257561ef6c31766))
+
 ## [0.10.1](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.0...flowlint-chrome-v0.10.1) (2025-12-15)
 
 
