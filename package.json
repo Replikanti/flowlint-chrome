@@ -26,7 +26,6 @@
     "devDependencies": {
         "@crxjs/vite-plugin": "2.3.0",
         "@octokit/rest": "22.0.1",
-        "@tailwindcss/postcss": "4.1.18",
         "@types/chrome": "0.1.32",
         "@types/node": "24.10.3",
         "@types/react": "19.2.7",
@@ -35,7 +34,7 @@
         "autoprefixer": "10.4.22",
         "openai": "6.10.0",
         "postcss": "8.5.6",
-        "tailwindcss": "4.1.18",
+        "tailwindcss": "^3.4.17",
         "typescript": "5.9.3",
         "vite": "7.2.7"
     }
