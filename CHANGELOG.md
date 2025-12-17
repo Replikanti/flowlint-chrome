@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.4](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.3...flowlint-chrome-v0.10.4) (2025-12-17)
+
+
+### Bug Fixes
+
+* revert Tailwind v4 migration that broke Chrome extension UI ([01dcb63](https://github.com/Replikanti/flowlint-chrome/commit/01dcb639184957b9e0fb874bf74773ab38f0d2a0))
+
 ## [0.10.3](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.2...flowlint-chrome-v0.10.3) (2025-12-16)
 
 
