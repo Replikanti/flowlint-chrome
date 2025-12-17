@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.5](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.4...flowlint-chrome-v0.10.5) (2025-12-17)
+
+
+### Bug Fixes
+
+* **ci:** enhance AI prompt to always mention core library upgrades ([bbf94b0](https://github.com/Replikanti/flowlint-chrome/commit/bbf94b09cde191c5be0254bb6b99726932e084a0))
+* **ci:** enhance AI prompt to always mention core library upgrades ([f35a198](https://github.com/Replikanti/flowlint-chrome/commit/f35a198f9412ce84cfa993ae39a6cd301c3403f6))
+
 ## [0.10.4](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.3...flowlint-chrome-v0.10.4) (2025-12-17)
 
 
