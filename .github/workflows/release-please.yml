@@ -18,6 +18,7 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          token: ${{ secrets.AUTO_APPROVE_PAT }}
 
       - name: Trigger Automerge
         if: ${{ !steps.release.outputs.release_created }}
