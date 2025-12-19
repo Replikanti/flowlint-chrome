@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.10.6](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.5...flowlint-chrome-v0.10.6) (2025-12-19)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @replikanti/flowlint-core to ^0.9.0 ([#83](https://github.com/Replikanti/flowlint-chrome/issues/83)) ([69e9fa1](https://github.com/Replikanti/flowlint-chrome/commit/69e9fa17d27de4335da96b58d22147db5315e13c))
+* enable manual CI trigger and fix release PR execution ([cbd6bae](https://github.com/Replikanti/flowlint-chrome/commit/cbd6bae10f16648d1b53294f9c085b7b1eba3060))
+* enable manual CI trigger and fix release-please token to trigger CI ([2fa8d36](https://github.com/Replikanti/flowlint-chrome/commit/2fa8d365bdf7d56f8c05085bbaeae0adefd95f0e))
+
 ## [0.10.5](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.4...flowlint-chrome-v0.10.5) (2025-12-17)
 
 
