@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.7](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.6...flowlint-chrome-v0.10.7) (2025-12-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lucide-react to ^0.562.0 ([#90](https://github.com/Replikanti/flowlint-chrome/issues/90)) ([bd0724c](https://github.com/Replikanti/flowlint-chrome/commit/bd0724cfd9b866c88cf2646916b8bc572af48a3e))
+
 ## [0.10.6](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.5...flowlint-chrome-v0.10.6) (2025-12-19)
 
 
