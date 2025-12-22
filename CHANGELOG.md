@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.10.9](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.8...flowlint-chrome-v0.10.9) (2025-12-22)
+
+
+### Bug Fixes
+
+* **ci:** address security findings in workflows ([fc048a8](https://github.com/Replikanti/flowlint-chrome/commit/fc048a81f3fb433ccb7d193c0dee95488fc42d7a))
+* **ci:** improve chrome release pipeline and add debugging ([a855cca](https://github.com/Replikanti/flowlint-chrome/commit/a855ccaedb4420d04eef26a45bbc52bb8cff97a1))
+* **ci:** split approve and merge steps to fix token permissions ([2dc2e58](https://github.com/Replikanti/flowlint-chrome/commit/2dc2e588b16c6434c8747e51449c43a29910bab4))
+* **scripts:** restore full AI prompt and async wrapper ([e36ab2f](https://github.com/Replikanti/flowlint-chrome/commit/e36ab2ff09c72bd28fd0e5fca5420c9a0ddfc88c))
+* **scripts:** revert top-level await to fix CI execution ([047310a](https://github.com/Replikanti/flowlint-chrome/commit/047310ac35bc357cb29a0bb5d49a94353226e18e))
+
 ## [0.10.8](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.7...flowlint-chrome-v0.10.8) (2025-12-22)
 
 
