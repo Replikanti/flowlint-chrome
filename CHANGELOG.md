@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.10](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.9...flowlint-chrome-v0.10.10) (2025-12-22)
+
+
+### Bug Fixes
+
+* **chrome:** bump version to 0.10.10 and simplify manifest ([ff0dc0b](https://github.com/Replikanti/flowlint-chrome/commit/ff0dc0bce08eb33eb484c6a390956fc19f447d04))
+* **chrome:** bump version to 0.10.10 and simplify manifest ([7ff6b65](https://github.com/Replikanti/flowlint-chrome/commit/7ff6b65324e9e28ade494b94fe53f075e1c08040))
+
 ## [0.10.9](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.8...flowlint-chrome-v0.10.9) (2025-12-22)
 
 
