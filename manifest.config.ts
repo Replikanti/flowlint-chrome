@@ -8,10 +8,9 @@ const [major, minor, patch] = version.replace(/[^\d.]/g, '').split('.');
 
 export default defineManifest(async (env) => ({
   manifest_version: 3,
-  name: env.mode === 'staging' ? '[DEV] FlowLint' : 'FlowLint - n8n Workflow Auditor',
+  name: 'FlowLint - n8n Workflow Auditor',
   description: 'Static analysis and security check for n8n workflows.',
   version: `${major}.${minor}.${patch}`,
-  version_name: version,
   action: {
     default_icon: {
       '16': 'icon-16.png',
