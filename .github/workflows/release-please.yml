@@ -75,10 +75,23 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+      - name: Debug Manifest
+        run: |
+          echo "Manifest content:"
+          cat dist/manifest.json
+          VERSION=$(node -p "require('./package.json').version")
+          MANIFEST_VERSION=$(node -p "require('./dist/manifest.json').version")
+          echo "Package version: $VERSION"
+          echo "Manifest version: $MANIFEST_VERSION"
+          if [ "$VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "::error::Version mismatch between package.json and manifest.json"
+            exit 1
+          fi
+
       - name: Zip Extension
         run: |
-          sudo apt-get install -y zip
-          cd dist && zip -r ../extension.zip .
+          cd dist
+          zip -r ../extension.zip . -x "*.map" -x "*.DS_Store"
 
       - name: Upload to Chrome Web Store
         uses: mnao305/chrome-extension-upload@4008e29e13c144d0f6725462cbd49b7c291b4928 # v5.0.0
