@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.12](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.11...flowlint-chrome-v0.10.12) (2025-12-25)
+
+
+### Bug Fixes
+
+* **chrome:** address SonarQube issues in CSS and tests ([6cbec50](https://github.com/Replikanti/flowlint-chrome/commit/6cbec50c87126b336c0e19298d4a10afcef5e899))
+* **chrome:** resolve build errors with tailwindcss v4 and postcss ([f0c5d5d](https://github.com/Replikanti/flowlint-chrome/commit/f0c5d5dd5e415c8f4346647be851e785db3c8566))
+
 ## [0.10.11](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.10...flowlint-chrome-v0.10.11) (2025-12-23)
 
 
