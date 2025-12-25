@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.15](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.14...flowlint-chrome-v0.10.15) (2025-12-25)
+
+
+### Bug Fixes
+
+* **chrome:** ultimate visual stability and contrast fixes for tailwin… ([19eac86](https://github.com/Replikanti/flowlint-chrome/commit/19eac86cd38b88470a2f4caeecd9e72d4fb14d7a))
+* **chrome:** ultimate visual stability and contrast fixes for tailwind v4 ([27aae48](https://github.com/Replikanti/flowlint-chrome/commit/27aae4830c83803469b0b70d7498bb9d94faf368))
+
 ## [0.10.14](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.13...flowlint-chrome-v0.10.14) (2025-12-25)
 
 
