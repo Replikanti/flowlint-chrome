@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.13](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.12...flowlint-chrome-v0.10.13) (2025-12-25)
+
+
+### Bug Fixes
+
+* **chrome:** complete tailwind v4 migration and fix visual regressions ([ab1bfba](https://github.com/Replikanti/flowlint-chrome/commit/ab1bfbaf75b694556970eae8b80d36f5da81ebac))
+* **chrome:** complete tailwind v4 migration and fix visual regressions ([487d41b](https://github.com/Replikanti/flowlint-chrome/commit/487d41b7ef708cdf0d8d5dc290c62a10b5bb7e17))
+
 ## [0.10.12](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.11...flowlint-chrome-v0.10.12) (2025-12-25)
 
 
