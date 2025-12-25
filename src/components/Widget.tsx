@@ -156,7 +156,7 @@ export const Widget = () => {
 
   return (
     <div 
-      className={`bg-white dark:bg-zinc-900 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 flex flex-col overflow-hidden transition-all duration-300 font-sans ${isMinimized ? 'w-72 h-14' : 'w-[450px] max-h-[85vh] h-auto min-h-[200px]'}`}
+      className={`bg-white! dark:bg-zinc-900! rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 flex flex-col overflow-hidden transition-all duration-300 font-sans \${isMinimized ? 'w-72 h-14' : 'w-[450px] max-h-[85vh] h-auto min-h-[200px]'}`}
       onKeyDown={stopPropagation}
       onPaste={stopPropagation}
       onCopy={stopPropagation}
@@ -198,7 +198,7 @@ export const Widget = () => {
             {results ? (
                <>
                   <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                    <div className="sticky top-0 z-20 -mx-4 px-4 py-2 bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                    <div className="sticky top-0 z-20 -mx-4 px-4 py-2 bg-white! dark:bg-zinc-950! border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
                              Found {findings.length} issues
@@ -320,7 +320,7 @@ export const Widget = () => {
                            onChange={e => setInput(e.target.value)}
                            onKeyDown={stopPropagation}
                            onPaste={stopPropagation}
-                           className="w-full h-24 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md p-3 text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/50 text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 transition-shadow"
+                           className="w-full h-24 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md p-3 text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-brand-500 text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 transition-shadow"
                         />
                         {input.length > 0 && (
                            <button 
