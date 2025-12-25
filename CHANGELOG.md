@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.14](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.13...flowlint-chrome-v0.10.14) (2025-12-25)
+
+
+### Bug Fixes
+
+* **ci:** revert publish to true as requested ([247fa12](https://github.com/Replikanti/flowlint-chrome/commit/247fa12a6eac9be349b9da84eb31994042b52e37))
+* **ci:** revert publish to true as requested ([7147159](https://github.com/Replikanti/flowlint-chrome/commit/71471594b8688c79628b4ad67ceb35d8088ed6cb))
+
 ## [0.10.13](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.12...flowlint-chrome-v0.10.13) (2025-12-25)
 
 
