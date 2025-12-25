@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { formatCsv, analysisResultsToRun, type FlowLintRun } from './exporters';
 import type { Finding } from '@replikanti/flowlint-core';
 
 // Mock chrome API
-global.chrome = {
+(globalThis as any).chrome = {
   runtime: {
     getManifest: () => ({ version: '1.0.0' }),
   },

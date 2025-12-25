@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@plugin "tailwindcss-animate";
-
 @theme {
   --color-brand-50: #fff1f2;
   --color-brand-100: #ffe4e6;
