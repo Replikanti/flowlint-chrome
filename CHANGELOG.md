@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.17](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.16...flowlint-chrome-v0.10.17) (2025-12-26)
+
+
+### Bug Fixes
+
+* **chrome:** consolidated tailwind v4 migration and visual fixes ([2361bd8](https://github.com/Replikanti/flowlint-chrome/commit/2361bd8a0b1b7f5f94af2c58bd1e9ec0f5132681))
+* **chrome:** consolidated tailwind v4 migration and visual fixes ([b29e916](https://github.com/Replikanti/flowlint-chrome/commit/b29e916a907c3cb78e91f26bb159aada7c6b32ac))
+* **chrome:** resolve SonarQube issues and improve accessibility ([4e580c3](https://github.com/Replikanti/flowlint-chrome/commit/4e580c37b5b5d5222191e8e82d519fce40f2f22f))
+* **chrome:** use semantic dialog and correct event handling ([964fe27](https://github.com/Replikanti/flowlint-chrome/commit/964fe27084aa55087a47729952b151594200c1ed))
+
 ## [0.10.16](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.15...flowlint-chrome-v0.10.16) (2025-12-25)
 
 
