@@ -36,43 +36,48 @@
   box-sizing: border-box !important;
 }
 
-/* 
- * N8N CANVAS MOTIF (DOT GRID)
- */
+/* N8N CANVAS MOTIF */
 .bg-app {
-  background-color: #f4f4f5 !important; /* zinc-100 */
+  background-color: #f4f4f5 !important;
   background-image: radial-gradient(#e4e4e7 1px, transparent 1px) !important;
   background-size: 20px 20px !important;
 }
 
 .dark .dark\:bg-app {
-  background-color: #09090b !important; /* zinc-950 */
+  background-color: #09090b !important;
   background-image: radial-gradient(#27272a 1px, transparent 1px) !important;
   background-size: 20px 20px !important;
 }
 
-/* Enhanced Card style */
+/* Card style */
 .card {
   background-color: #ffffff !important;
   border: 1px solid #e4e4e7 !important;
-  border-radius: 1rem !important; /* rounded-2xl */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
 .dark .card {
   background-color: #18181b !important;
   border: 1px solid #27272a !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Fixed backgrounds */
-.bg-white { background-color: #ffffff !important; }
-.bg-zinc-50 { background-color: #fafafa !important; }
+/* SEVERITY COLORS - BULLETPROOF CONTRAST */
+.sev-must { color: #dc2626 !important; } /* red-600 */
+.dark .sev-must { color: #f87171 !important; } /* red-400 */
 
-/* Text color enforcement */
+.sev-should { color: #d97706 !important; } /* amber-600 */
+.dark .sev-should { color: #fbbf24 !important; } /* amber-400 */
+
+.sev-nit { color: #2563eb !important; } /* blue-600 */
+.dark .sev-nit { color: #60a5fa !important; } /* blue-400 */
+
+/* Backgrounds for badges */
+.bg-sev-box { background-color: #f4f4f5 !important; }
+.dark .bg-sev-box { background-color: #27272a !important; }
+
+/* Text colors */
 .text-zinc-900 { color: #18181b !important; }
-.text-zinc-800 { color: #27272a !important; }
-.text-zinc-700 { color: #3f3f46 !important; }
 .text-zinc-500 { color: #71717a !important; }
 .dark .dark\:text-zinc-100 { color: #f4f4f5 !important; }
 .dark .dark\:text-zinc-400 { color: #a1a1aa !important; }
@@ -82,5 +87,4 @@
 .text-brand-600 { color: #e11d48 !important; }
 
 .rounded-full { border-radius: 9999px !important; }
-.rounded-xl { border-radius: 0.75rem !important; }
 .rounded-2xl { border-radius: 1rem !important; }
