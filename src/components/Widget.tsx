@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { parseN8n, runAllRules, defaultConfig } from '@replikanti/flowlint-core';
 
 
-import { AlertCircle, CheckCircle, AlertTriangle, Info, Play, ExternalLink, ClipboardPaste, X, Minimize2, Maximize2, Eraser, ChevronDown, ChevronRight, FileJson, ListChecks } from 'lucide-react';
+import { AlertCircle, CheckCircle, AlertTriangle, Info, ExternalLink, ClipboardPaste, X, Minimize2, Maximize2, Eraser, FileJson, ListChecks } from 'lucide-react';
 import type { Finding } from '@replikanti/flowlint-core';
 
 import { ExportPanel } from './ExportPanel';
@@ -10,12 +10,10 @@ import { ExportPanel } from './ExportPanel';
 export const Widget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   
   const [input, setInput] = useState('');
   const [results, setResults] = useState<Finding[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [clipboardWorkflow, setClipboardWorkflow] = useState<string | null>(null);
 
   const isValidWorkflow = (text: string) => {
@@ -57,14 +55,12 @@ export const Widget = () => {
 
   const analyzeWorkflow = async (jsonContent: string) => {
     setLoading(true);
-    setError(null);
     try {
       const graph = parseN8n(jsonContent);
       const findings = runAllRules(graph, { cfg: defaultConfig, path: 'clipboard.json', nodeLines: graph.meta.nodeLines as Record<string, number> | undefined });
       setResults(findings);
     } catch (err) {
        console.error(err);
-       setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
        setLoading(false);
     }
@@ -94,34 +90,31 @@ export const Widget = () => {
       .filter(group => group.items.length > 0)
   ), [sortedFindings]);
   
-  const toggleGroup = (severity: string) => {
-    setCollapsedGroups(prev => ({ ...prev, [severity]: !prev[severity] }));
-  };
-
   if (!isOpen) {
     return (
       <div className="flex flex-col items-end gap-2 font-sans" style={{ colorScheme: 'light' }}>
         {clipboardWorkflow && (
-           <div className="bg-brand-600 text-white text-xs px-3 py-1.5 rounded-lg shadow-lg animate-bounce cursor-pointer font-bold border border-brand-700"
+           <button 
+                type="button"
+                className="bg-brand-600 text-white text-xs px-3 py-1.5 rounded-lg shadow-lg animate-bounce cursor-pointer font-bold border border-brand-700"
                 onClick={() => { setIsOpen(true); handlePasteAndAnalyze(); }}>
               Workflow detected! Click to analyze.
-           </div>
+           </button>
         )}
         <button 
           onClick={() => setIsOpen(true)}
           className="w-14 h-14 bg-brand-500 hover:bg-brand-600 rounded-full shadow-xl flex items-center justify-center text-white transition-transform hover:scale-105 border-2 border-white dark:border-zinc-800"
+          aria-label="Open FlowLint"
         >
-          <img src={chrome.runtime.getURL('icon-32.png')} className="w-8 h-8 rounded" />
+          <img src={chrome.runtime.getURL('icon-32.png')} className="w-8 h-8 rounded" alt="FlowLint Logo" />
         </button>
       </div>
     );
   }
 
-  const WIDGET_WIDTH = 450;
-  const WIDGET_HEIGHT = 600;
   const containerStyle: React.CSSProperties = isMinimized 
     ? { width: `280px`, height: `56px` } 
-    : { width: `\${WIDGET_WIDTH}px`, height: `\${WIDGET_HEIGHT}px` };
+    : { width: `450px`, height: `600px` };
 
   return (
     <div 
@@ -132,20 +125,22 @@ export const Widget = () => {
       onCopy={stopPropagation}
       onCut={stopPropagation}
       onClick={stopPropagation}
+      role="dialog"
+      aria-label="FlowLint Auditor"
     >
       {/* Header */}
       <header className="h-14 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 flex-shrink-0 z-10">
          <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-brand-50 dark:bg-brand-900/20 rounded-lg flex items-center justify-center border border-brand-100 dark:border-brand-800">
-               <img src={chrome.runtime.getURL('icon-32.png')} className="w-5 h-5 rounded-sm" />
+               <img src={chrome.runtime.getURL('icon-32.png')} className="w-5 h-5 rounded-sm" alt="Logo" />
             </div>
             <h1 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">FlowLint</h1>
          </div>
          <div className="flex items-center gap-1">
-            <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors">
+            <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
                {isMinimized ? <Maximize2 className="w-4 h-4"/> : <Minimize2 className="w-4 h-4"/>}
             </button>
-            <button onClick={() => setIsOpen(false)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors">
+            <button onClick={() => setIsOpen(false)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label="Close">
                <X className="w-4 h-4"/>
             </button>
          </div>
@@ -155,16 +150,16 @@ export const Widget = () => {
          <div className="flex-1 overflow-hidden flex flex-col relative p-3 gap-3">
             
             {loading && (
-               <div className="absolute inset-0 bg-zinc-900/40 z-30 flex items-center justify-center backdrop-blur-[1px]">
+               <div className="absolute inset-0 bg-white/60 dark:bg-zinc-900/60 z-30 flex items-center justify-center backdrop-blur-[1px]">
                   <div className="card p-6 flex flex-col items-center gap-3">
                      <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                     <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Analyzing...</span>
+                     <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Analyzing workflow...</span>
                   </div>
                </div>
             )}
 
             {/* Input Card */}
-            <div className={`card flex flex-col overflow-hidden transition-all duration-300 \${results ? 'h-32' : 'flex-1'}`}>
+            <div className={`card flex flex-col overflow-hidden transition-all duration-300 \${results ? 'h-32' : 'flex-[1.5]'}`}>
                <div className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
                      <FileJson className="w-3 h-3" /> Workflow JSON
@@ -260,7 +255,6 @@ export const Widget = () => {
 
 const FindingCard = ({ finding }: { finding: Finding }) => {
    const colorClass = getSeverityColor(finding.severity);
-   const Icon = getSeverityIcon(finding.severity);
    const docUrl = finding.documentationUrl || (finding.rule.match(/^R\d+$/) ? `https://github.com/Replikanti/flowlint-examples/tree/main/\${finding.rule}` : null);
  
    return (
@@ -269,7 +263,7 @@ const FindingCard = ({ finding }: { finding: Finding }) => {
          <div className="flex items-center justify-between mb-1.5">
              <span className="text-[10px] text-zinc-400 font-mono font-bold tracking-tighter">{finding.rule}</span>
              {docUrl && (
-               <a href={docUrl} target="_blank" rel="noreferrer" className="text-brand-600 hover:text-brand-700">
+               <a href={docUrl} target="_blank" rel="noreferrer" className="text-brand-600 hover:text-brand-700" aria-label="View documentation">
                  <ExternalLink className="w-3 h-3" />
                </a>
              )}
