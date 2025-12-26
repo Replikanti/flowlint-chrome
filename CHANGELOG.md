@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.18](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.17...flowlint-chrome-v0.10.18) (2025-12-26)
+
+
+### Bug Fixes
+
+* **chrome:** lock window position with explicit margin reset ([c71c884](https://github.com/Replikanti/flowlint-chrome/commit/c71c8845cc1ddb88c8e7775e85a22f5797dc097d))
+* **chrome:** revert dialog to div for layout stability ([48f47d2](https://github.com/Replikanti/flowlint-chrome/commit/48f47d2e429e958a9e0acc46a9422ece96534bab))
+* **chrome:** revert dialog to div for layout stability ([c061d12](https://github.com/Replikanti/flowlint-chrome/commit/c061d12bc11231f32e62891c3603fda42f825d27))
+* **chrome:** semantic and accessibility polish for widget ([00d38bd](https://github.com/Replikanti/flowlint-chrome/commit/00d38bd23e51d59ebd6e5b3cc35043d64d2596d4))
+
 ## [0.10.17](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.16...flowlint-chrome-v0.10.17) (2025-12-26)
 
 
