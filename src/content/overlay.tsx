@@ -40,7 +40,7 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
 
   // Detect and apply dark mode based on system preference
   const updateDarkMode = () => {
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
     if (isDark) {
       rootContainer.classList.add('dark');
     } else {
@@ -52,7 +52,7 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   updateDarkMode();
 
   // Listen for system preference changes
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateDarkMode);
+  globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateDarkMode);
 
   shadow.appendChild(rootContainer);
 
