@@ -209,49 +209,49 @@ export const Widget = () => {
                              <p className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Workflow is clean!</p>
                           </div>
                        ) : (
-                          groupedFindings.map(group => (
-                            <div key={group.severity} className="space-y-2">
-                              <div className="flex items-center gap-2 px-1">
-                                 <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 \${getSeverityColor(group.severity)}`}>
-                                   {group.severity}
-                                 </span>
-                                 <div className="h-[1px] flex-1 bg-zinc-100 dark:bg-zinc-800"></div>
-                                 <span className="text-[10px] font-bold text-zinc-400">{group.items.length}</span>
-                              </div>
-                              {group.items.map((f, i) => <FindingCard key={`\${group.severity}-\${i}`} finding={f} />)}
+                        groupedFindings.map(group => (
+                          <div key={group.severity} className="space-y-2">
+                            <div className="flex items-center gap-2 px-1">
+                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-sev-box \${getSeverityColor(group.severity)}`}>
+                                 {group.severity}
+                               </span>
+                               <div className="h-[1px] flex-1 bg-zinc-100 dark:bg-zinc-800"></div>
+                               <span className="text-[10px] font-bold text-zinc-400">{group.items.length}</span>
                             </div>
-                          ))
-                       )}
-                    </div>
-                    
-                    {results.length > 0 && <ExportPanel results={results} workflowName="n8n-workflow" />}
-                 </div>
-              ) : (
-                 /* Large Empty State Card */
-                 <div className="card flex-1 flex flex-col items-center justify-center gap-4 text-center p-8 bg-white dark:bg-zinc-900">
-                    <div className="w-20 h-20 bg-brand-50 dark:bg-brand-900/20 rounded-3xl flex items-center justify-center border border-brand-100 dark:border-brand-800 shadow-inner">
-                       <ClipboardPaste className="w-10 h-10 text-brand-500" />
-                    </div>
-                    <div>
-                       <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base">Ready to Audit?</h3>
-                       <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
-                          Copy workflow to clipboard or <br/> paste JSON into the field above.
-                       </p>
-                    </div>
-                 </div>
-              )}
+                            {group.items.map((f, i) => <FindingCard key={`\${group.severity}-\${i}`} finding={f} />)}
+                          </div>
+                        ))
+                     )}
+                  </div>
+                  
+                  {results.length > 0 && <ExportPanel results={results} workflowName="n8n-workflow" />}
+               </div>
+            ) : (
+               /* Large Empty State Card */
+               <div className="card flex-1 flex flex-col items-center justify-center gap-4 text-center p-8 bg-white dark:bg-zinc-900">
+                  <div className="w-20 h-20 bg-brand-50 dark:bg-brand-900/20 rounded-3xl flex items-center justify-center border border-brand-100 dark:border-brand-800 shadow-inner">
+                     <ClipboardPaste className="w-10 h-10 text-brand-500" />
+                  </div>
+                  <div>
+                     <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base">Ready to Audit?</h3>
+                     <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
+                        Copy workflow to clipboard or <br/> paste JSON into the field above.
+                     </p>
+                  </div>
+               </div>
+            )}
 
-              {/* Footer */}
-              <footer className="flex items-center justify-between px-1 flex-shrink-0">
-                 <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">FlowLint</span>
-                 <div className="flex items-center gap-3">
-                   <a href="https://flowlint.dev/support" target="_blank" rel="noreferrer" className="text-[10px] text-zinc-500 hover:text-brand-600 transition-colors font-medium">Support</a>
-                   <span className="text-[9px] text-zinc-300 dark:text-zinc-600 font-mono">v{chrome.runtime.getManifest().version}</span>
-                 </div>
-              </footer>
-           </div>
-        )}
-      </div>
+            {/* Footer */}
+            <footer className="flex items-center justify-between px-1 flex-shrink-0">
+               <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">FlowLint</span>
+               <div className="flex items-center gap-3">
+                 <a href="https://flowlint.dev/support" target="_blank" rel="noreferrer" className="text-[10px] text-zinc-500 hover:text-brand-600 transition-colors font-medium">Support</a>
+                 <span className="text-[9px] text-zinc-300 dark:text-zinc-600 font-mono">v{chrome.runtime.getManifest().version}</span>
+               </div>
+            </footer>
+         </div>
+      )}
+    </div>
     </section>
   );
 };
@@ -266,6 +266,7 @@ const FindingCard = ({ finding }: { finding: Finding }) => {
        <div className={`mt-0.5 \${colorClass}`}><Icon className="w-5 h-5" /></div>
        <div className="flex-1 min-w-0">
          <div className="flex items-center justify-between mb-1.5">
+             <span className={`text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-md bg-sev-box \${colorClass}`}>{finding.severity}</span>
              <span className="text-[10px] text-zinc-400 font-mono font-bold tracking-tighter">{finding.rule}</span>
              {docUrl && (
                <a href={docUrl} target="_blank" rel="noreferrer" className="text-brand-600 hover:text-brand-700" aria-label="View documentation">
@@ -295,9 +296,9 @@ function getSeverityWeight(severity: string) {
 
 function getSeverityColor(severity: string) {
   switch(severity) {
-    case 'must': return 'text-red-600 dark:text-red-500';
-    case 'should': return 'text-amber-600 dark:text-amber-500';
-    case 'nit': return 'text-blue-600 dark:text-blue-400';
+    case 'must': return 'sev-must';
+    case 'should': return 'sev-should';
+    case 'nit': return 'sev-nit';
     default: return 'text-zinc-500';
   }
 }
