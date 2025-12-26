@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "media", // Respektuje nastavení systému (Světle/Tmavě)
+  darkMode: "class", // Respektuje nastavení systému (Světle/Tmavě)
   content: [
     "./src/**/*.{ts,tsx}",
   ],

@@ -37,10 +37,23 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
 
   // Mount Point inside Shadow DOM
   const rootContainer = document.createElement('div');
-  // Pass the dark mode preference if the host page has it
-  if (document.documentElement.classList.contains('dark')) {
+
+  // Detect and apply dark mode based on system preference
+  const updateDarkMode = () => {
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (isDark) {
       rootContainer.classList.add('dark');
-  }
+    } else {
+      rootContainer.classList.remove('dark');
+    }
+  };
+
+  // Initial dark mode detection
+  updateDarkMode();
+
+  // Listen for system preference changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateDarkMode);
+
   shadow.appendChild(rootContainer);
 
   // --- 1. Global History Patching REMOVED ---

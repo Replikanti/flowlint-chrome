@@ -92,7 +92,7 @@ export const Widget = () => {
   
   if (!isOpen) {
     return (
-      <div className="flex flex-col items-end gap-2 font-sans" style={{ colorScheme: 'light' }}>
+      <div className="flex flex-col items-end gap-2 font-sans">
         {clipboardWorkflow && (
            <button 
                 type="button"
