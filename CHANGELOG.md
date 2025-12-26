@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.19](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.18...flowlint-chrome-v0.10.19) (2025-12-26)
+
+
+### Bug Fixes
+
+* **chrome:** solve black-on-black contrast in severity badges ([181c379](https://github.com/Replikanti/flowlint-chrome/commit/181c379d9673769c2d8dc38a150d261f3a737188))
+* **chrome:** solve black-on-black contrast in severity badges ([d48eef8](https://github.com/Replikanti/flowlint-chrome/commit/d48eef85e22533adf5e7c4437dd76577b39ccdd2))
+* **deps:** update dependency @replikanti/flowlint-core to v0.9.3 ([036d298](https://github.com/Replikanti/flowlint-chrome/commit/036d298f68d0ee33a66d75add054e5325e3e68be))
+* **deps:** update dependency @replikanti/flowlint-core to v0.9.3 ([7788011](https://github.com/Replikanti/flowlint-chrome/commit/7788011164d695630400130bfd6e3c071caac116))
+
 ## [0.10.18](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.17...flowlint-chrome-v0.10.18) (2025-12-26)
 
 
