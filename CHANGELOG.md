@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.20](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.19...flowlint-chrome-v0.10.20) (2025-12-26)
+
+
+### Bug Fixes
+
+* **chrome:** ensure consistent dark/light mode across all components ([5e45703](https://github.com/Replikanti/flowlint-chrome/commit/5e45703aaed0c2a79f18aad7eaad786485d39e5a))
+* **chrome:** ensure consistent dark/light mode across all components ([82b9667](https://github.com/Replikanti/flowlint-chrome/commit/82b9667362a7e4ff57120179433547243160d004))
+
 ## [0.10.19](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.18...flowlint-chrome-v0.10.19) (2025-12-26)
 
 
