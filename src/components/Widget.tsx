@@ -117,149 +117,153 @@ export const Widget = () => {
     : { width: `450px`, height: `600px` };
 
   return (
-    <div 
+    <section 
       style={containerStyle}
-      className="bg-app dark:bg-app rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col overflow-hidden transition-all duration-300 font-sans"
-      onKeyDown={stopPropagation}
-      onPaste={stopPropagation}
-      onCopy={stopPropagation}
-      onCut={stopPropagation}
-      onClick={stopPropagation}
-      role="region"
+      className="flex flex-col overflow-hidden transition-all duration-300 font-sans"
       aria-label="FlowLint Auditor"
     >
-      {/* Header */}
-      <header className="h-14 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 flex-shrink-0 z-10">
-         <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-50 dark:bg-brand-900/20 rounded-lg flex items-center justify-center border border-brand-100 dark:border-brand-800">
-               <img src={chrome.runtime.getURL('icon-32.png')} className="w-5 h-5 rounded-sm" alt="Logo" />
-            </div>
-            <h1 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">FlowLint</h1>
-         </div>
-         <div className="flex items-center gap-1">
-            <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
-               {isMinimized ? <Maximize2 className="w-4 h-4"/> : <Minimize2 className="w-4 h-4"/>}
-            </button>
-            <button onClick={() => setIsOpen(false)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label="Close">
-               <X className="w-4 h-4"/>
-            </button>
-         </div>
-      </header>
+      <div 
+        className="w-full h-full bg-app dark:bg-app rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col overflow-hidden"
+        onKeyDown={stopPropagation}
+        onPaste={stopPropagation}
+        onCopy={stopPropagation}
+        onCut={stopPropagation}
+        onClick={stopPropagation}
+      >
+        {/* Header */}
+        <header className="h-14 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 flex-shrink-0 z-10">
+           <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-brand-50 dark:bg-brand-900/20 rounded-lg flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                 <img src={chrome.runtime.getURL('icon-32.png')} className="w-5 h-5 rounded-sm" alt="Logo" />
+              </div>
+              <h1 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">FlowLint</h1>
+           </div>
+           <div className="flex items-center gap-1">
+              <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
+                 {isMinimized ? <Maximize2 className="w-4 h-4"/> : <Minimize2 className="w-4 h-4"/>}
+              </button>
+              <button onClick={() => setIsOpen(false)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label="Close">
+                 <X className="w-4 h-4"/>
+              </button>
+           </div>
+        </header>
 
-      {!isMinimized && (
-         <div className="flex-1 overflow-hidden flex flex-col relative p-3 gap-3">
-            
-            {loading && (
-               <div className="absolute inset-0 bg-white/60 dark:bg-zinc-900/60 z-30 flex items-center justify-center backdrop-blur-[1px]">
-                  <div className="card p-6 flex flex-col items-center gap-3">
-                     <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                     <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Analyzing workflow...</span>
-                  </div>
-               </div>
-            )}
+        {!isMinimized && (
+           <div className="flex-1 overflow-hidden flex flex-col relative p-3 gap-3">
+              
+              {loading && (
+                 <div className="absolute inset-0 bg-white/60 dark:bg-zinc-900/60 z-30 flex items-center justify-center backdrop-blur-[1px]">
+                    <div className="card p-6 flex flex-col items-center gap-3">
+                       <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                       <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Analyzing workflow...</span>
+                    </div>
+                 </div>
+              )}
 
-            {/* Input Card */}
-            <div className={`card flex flex-col overflow-hidden transition-all duration-300 \${results ? 'h-32' : 'flex-[1.5]'}`}>
-               <div className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
-                     <FileJson className="w-3 h-3" /> Workflow JSON
-                  </div>
-                  {clipboardWorkflow && !results && (
-                     <span className="text-[10px] text-brand-600 font-bold animate-pulse">Clipboard ready!</span>
-                  )}
-               </div>
-               <div className="flex-1 relative p-2">
-                  <textarea 
-                     placeholder="Paste your n8n workflow JSON here..."
-                     value={input}
-                     onChange={e => setInput(e.target.value)}
-                     className="w-full h-full bg-transparent border-none resize-none focus:outline-none text-[11px] font-mono text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400"
-                  />
-                  {input.length > 0 && (
-                     <button 
-                       onClick={() => analyzeWorkflow(input)}
-                       className="absolute bottom-2 right-2 bg-brand-600 hover:bg-brand-700 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold shadow-md transition-all hover:scale-105 active:scale-95"
-                     >
-                        {results ? 'Re-analyze' : 'Analyze'}
-                     </button>
-                  )}
-               </div>
-            </div>
+              {/* Input Card */}
+              <div className={`card flex flex-col overflow-hidden transition-all duration-300 \${results ? 'h-32' : 'flex-[1.5]'}`}>
+                 <div className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                       <FileJson className="w-3 h-3" /> Workflow JSON
+                    </div>
+                    {clipboardWorkflow && !results && (
+                       <span className="text-[10px] text-brand-600 font-bold animate-pulse">Clipboard ready!</span>
+                    )}
+                 </div>
+                 <div className="flex-1 relative p-2">
+                    <textarea 
+                       placeholder="Paste your n8n workflow JSON here..."
+                       value={input}
+                       onChange={e => setInput(e.target.value)}
+                       className="w-full h-full bg-transparent border-none resize-none focus:outline-none text-[11px] font-mono text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400"
+                    />
+                    {input.length > 0 && (
+                       <button 
+                         onClick={() => analyzeWorkflow(input)}
+                         className="absolute bottom-2 right-2 bg-brand-600 hover:bg-brand-700 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold shadow-md transition-all hover:scale-105 active:scale-95"
+                       >
+                          {results ? 'Re-analyze' : 'Analyze'}
+                       </button>
+                    )}
+                 </div>
+              </div>
 
-            {/* Results Card */}
-            {results ? (
-               <div className="card flex-1 flex flex-col overflow-hidden">
-                  <div className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-                     <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
-                        <ListChecks className="w-3 h-3" /> Results
-                     </div>
-                     <button onClick={() => setResults(null)} className="text-[10px] text-brand-600 font-bold hover:underline flex items-center gap-1">
-                        <Eraser className="w-3 h-3" /> Clear
-                     </button>
-                  </div>
-                  
-                  <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-white dark:bg-zinc-900">
-                     {findings.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-10 text-zinc-500">
-                           <div className="w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-3">
-                              <CheckCircle className="w-10 h-10 text-green-500" />
-                           </div>
-                           <p className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Workflow is clean!</p>
-                        </div>
-                     ) : (
-                        groupedFindings.map(group => (
-                          <div key={group.severity} className="space-y-2">
-                            <div className="flex items-center gap-2 px-1">
-                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 \${getSeverityColor(group.severity)}`}>
-                                 {group.severity}
-                               </span>
-                               <div className="h-[1px] flex-1 bg-zinc-100 dark:bg-zinc-800"></div>
-                               <span className="text-[10px] font-bold text-zinc-400">{group.items.length}</span>
-                            </div>
-                            {group.items.map((f, i) => <FindingCard key={`\${group.severity}-\${i}`} finding={f} />)}
+              {/* Results Card */}
+              {results ? (
+                 <div className="card flex-1 flex flex-col overflow-hidden">
+                    <div className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                       <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                          <ListChecks className="w-3 h-3" /> Results
+                       </div>
+                       <button onClick={() => setResults(null)} className="text-[10px] text-brand-600 font-bold hover:underline flex items-center gap-1">
+                          <Eraser className="w-3 h-3" /> Clear
+                       </button>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-white dark:bg-zinc-900">
+                       {findings.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center py-10 text-zinc-500">
+                             <div className="w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-3">
+                                <CheckCircle className="w-10 h-10 text-green-500" />
+                             </div>
+                             <p className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Workflow is clean!</p>
                           </div>
-                        ))
-                     )}
-                  </div>
-                  
-                  {results.length > 0 && <ExportPanel results={results} workflowName="n8n-workflow" />}
-               </div>
-            ) : (
-               /* Large Empty State Card */
-               <div className="card flex-1 flex flex-col items-center justify-center gap-4 text-center p-8 bg-white dark:bg-zinc-900">
-                  <div className="w-20 h-20 bg-brand-50 dark:bg-brand-900/20 rounded-3xl flex items-center justify-center border border-brand-100 dark:border-brand-800 shadow-inner">
-                     <ClipboardPaste className="w-10 h-10 text-brand-500" />
-                  </div>
-                  <div>
-                     <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base">Ready to Audit?</h3>
-                     <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
-                        Copy workflow to clipboard or <br/> paste JSON into the field above.
-                     </p>
-                  </div>
-               </div>
-            )}
+                       ) : (
+                          groupedFindings.map(group => (
+                            <div key={group.severity} className="space-y-2">
+                              <div className="flex items-center gap-2 px-1">
+                                 <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 \${getSeverityColor(group.severity)}`}>
+                                   {group.severity}
+                                 </span>
+                                 <div className="h-[1px] flex-1 bg-zinc-100 dark:bg-zinc-800"></div>
+                                 <span className="text-[10px] font-bold text-zinc-400">{group.items.length}</span>
+                              </div>
+                              {group.items.map((f, i) => <FindingCard key={`\${group.severity}-\${i}`} finding={f} />)}
+                            </div>
+                          ))
+                       )}
+                    </div>
+                    
+                    {results.length > 0 && <ExportPanel results={results} workflowName="n8n-workflow" />}
+                 </div>
+              ) : (
+                 /* Large Empty State Card */
+                 <div className="card flex-1 flex flex-col items-center justify-center gap-4 text-center p-8 bg-white dark:bg-zinc-900">
+                    <div className="w-20 h-20 bg-brand-50 dark:bg-brand-900/20 rounded-3xl flex items-center justify-center border border-brand-100 dark:border-brand-800 shadow-inner">
+                       <ClipboardPaste className="w-10 h-10 text-brand-500" />
+                    </div>
+                    <div>
+                       <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base">Ready to Audit?</h3>
+                       <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
+                          Copy workflow to clipboard or <br/> paste JSON into the field above.
+                       </p>
+                    </div>
+                 </div>
+              )}
 
-            {/* Footer */}
-            <footer className="flex items-center justify-between px-1 flex-shrink-0">
-               <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">FlowLint</span>
-               <div className="flex items-center gap-3">
-                 <a href="https://flowlint.dev/support" target="_blank" rel="noreferrer" className="text-[10px] text-zinc-500 hover:text-brand-600 transition-colors font-medium">Support</a>
-                 <span className="text-[9px] text-zinc-300 dark:text-zinc-600 font-mono">v{chrome.runtime.getManifest().version}</span>
-               </div>
-            </footer>
-         </div>
-      )}
-    </div>
+              {/* Footer */}
+              <footer className="flex items-center justify-between px-1 flex-shrink-0">
+                 <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">FlowLint</span>
+                 <div className="flex items-center gap-3">
+                   <a href="https://flowlint.dev/support" target="_blank" rel="noreferrer" className="text-[10px] text-zinc-500 hover:text-brand-600 transition-colors font-medium">Support</a>
+                   <span className="text-[9px] text-zinc-300 dark:text-zinc-600 font-mono">v{chrome.runtime.getManifest().version}</span>
+                 </div>
+              </footer>
+           </div>
+        )}
+      </div>
+    </section>
   );
 };
 
 const FindingCard = ({ finding }: { finding: Finding }) => {
    const colorClass = getSeverityColor(finding.severity);
-   const Icon = getSeverityIcon(finding.severity);
    const docUrl = finding.documentationUrl || (finding.rule.match(/^R\d+$/) ? `https://github.com/Replikanti/flowlint-examples/tree/main/\${finding.rule}` : null);
+   const Icon = getSeverityIcon(finding.severity);
  
    return (
      <div className="border border-zinc-100 dark:border-zinc-800 rounded-xl p-3 bg-white dark:bg-zinc-900/50 shadow-sm flex gap-3 items-start border-l-4 \${getSeverityBorder(finding.severity)} transition-all hover:shadow-md">
+       <div className={`mt-0.5 \${colorClass}`}><Icon className="w-5 h-5" /></div>
        <div className="flex-1 min-w-0">
          <div className="flex items-center justify-between mb-1.5">
              <span className="text-[10px] text-zinc-400 font-mono font-bold tracking-tighter">{finding.rule}</span>
