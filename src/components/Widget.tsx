@@ -113,12 +113,11 @@ export const Widget = () => {
   }
 
   const containerStyle: React.CSSProperties = isMinimized 
-    ? { width: `280px`, height: `56px`, padding: 0, margin: 0, background: 'transparent', border: 'none' } 
-    : { width: `450px`, height: `600px`, padding: 0, margin: 0, background: 'transparent', border: 'none' };
+    ? { width: `280px`, height: `56px`, margin: 0 } 
+    : { width: `450px`, height: `600px`, margin: 0 };
 
   return (
-    <dialog 
-      open
+    <section 
       style={containerStyle}
       className="flex flex-col overflow-hidden transition-all duration-300 font-sans"
       aria-label="FlowLint Auditor"
@@ -253,16 +252,18 @@ export const Widget = () => {
            </div>
         )}
       </div>
-    </dialog>
+    </section>
   );
 };
 
 const FindingCard = ({ finding }: { finding: Finding }) => {
    const colorClass = getSeverityColor(finding.severity);
    const docUrl = finding.documentationUrl || (finding.rule.match(/^R\d+$/) ? `https://github.com/Replikanti/flowlint-examples/tree/main/\${finding.rule}` : null);
+   const Icon = getSeverityIcon(finding.severity);
  
    return (
      <div className="border border-zinc-100 dark:border-zinc-800 rounded-xl p-3 bg-white dark:bg-zinc-900/50 shadow-sm flex gap-3 items-start border-l-4 \${getSeverityBorder(finding.severity)} transition-all hover:shadow-md">
+       <div className={`mt-0.5 \${colorClass}`}><Icon className="w-5 h-5" /></div>
        <div className="flex-1 min-w-0">
          <div className="flex items-center justify-between mb-1.5">
              <span className="text-[10px] text-zinc-400 font-mono font-bold tracking-tighter">{finding.rule}</span>
