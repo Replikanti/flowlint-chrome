@@ -30,6 +30,11 @@
   all: initial;
   display: block;
   font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+  color: #18181b !important; /* zinc-900 - default light mode */
+}
+
+.dark {
+  color: #f4f4f5 !important; /* zinc-100 - dark mode */
 }
 
 *, ::after, ::before {
@@ -43,7 +48,7 @@
   background-size: 20px 20px !important;
 }
 
-.dark .dark\:bg-app {
+.dark .bg-app {
   background-color: #09090b !important;
   background-image: radial-gradient(#27272a 1px, transparent 1px) !important;
   background-size: 20px 20px !important;
@@ -84,7 +89,14 @@
 
 /* Branding */
 .bg-brand-500 { background-color: #f43f5e !important; }
+.bg-brand-600 { background-color: #e11d48 !important; }
 .text-brand-600 { color: #e11d48 !important; }
+.text-white { color: #ffffff !important; }
+
+/* Border colors */
+.border-white { border-color: #ffffff !important; }
+.dark .border-zinc-800 { border-color: #27272a !important; }
+.border-brand-700 { border-color: #be123c !important; }
 
 .rounded-full { border-radius: 9999px !important; }
 .rounded-2xl { border-radius: 1rem !important; }
