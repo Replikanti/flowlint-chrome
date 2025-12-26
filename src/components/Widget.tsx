@@ -113,8 +113,8 @@ export const Widget = () => {
   }
 
   const containerStyle: React.CSSProperties = isMinimized 
-    ? { width: `280px`, height: `56px` } 
-    : { width: `450px`, height: `600px` };
+    ? { width: `280px`, height: `56px`, margin: 0 } 
+    : { width: `450px`, height: `600px`, margin: 0 };
 
   return (
     <section 
