@@ -258,7 +258,7 @@ export const Widget = () => {
 
 const FindingCard = ({ finding }: { finding: Finding }) => {
    const colorClass = getSeverityColor(finding.severity);
-   const docUrl = finding.documentationUrl || (finding.rule.match(/^R\d+$/) ? `https://github.com/Replikanti/flowlint-examples/tree/main/\${finding.rule}` : null);
+   const docUrl = finding.documentationUrl || (finding.rule.match(/^R\d+$/) ? `https://github.com/Replikanti/flowlint-examples/tree/main/${finding.rule}` : null);
    const Icon = getSeverityIcon(finding.severity);
  
    return (
