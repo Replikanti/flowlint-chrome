@@ -63,7 +63,7 @@ export function formatStylish(run: FlowLintRun): string {
   }
 
   const lines: string[] = [];
-  lines.push(`FlowLint Report â€“ ${meta.workflowName}`);
+  lines.push(`FlowLint Report – ${meta.workflowName}`);
   lines.push(`Generated: ${meta.generatedAt}`);
   lines.push(`Version: ${meta.flowlintVersion}`);
   lines.push('');
@@ -77,7 +77,7 @@ export function formatStylish(run: FlowLintRun): string {
       if (finding.raw_details) {
         const detailLines = finding.raw_details.split('\n');
         detailLines.forEach(line => {
-          if (line.trim()) lines.push(`      â†’ ${line.trim()}`);
+          if (line.trim()) lines.push(`      → ${line.trim()}`);
         });
       }
     }
@@ -85,7 +85,7 @@ export function formatStylish(run: FlowLintRun): string {
   }
 
   lines.push(
-    `âœ– ${summary.total} problems (${summary.bySeverity.must} must, ${summary.bySeverity.should} should, ${summary.bySeverity.nit} nit)`
+    `✖ ${summary.total} problems (${summary.bySeverity.must} must, ${summary.bySeverity.should} should, ${summary.bySeverity.nit} nit)`
   );
 
   return lines.join('\n');
@@ -227,7 +227,7 @@ export function formatJunit(run: FlowLintRun): string {
   );
 
   for (const finding of findings) {
-    const testName = `${finding.rule} â€“ ${finding.nodeId || 'workflow'}`;
+    const testName = `${finding.rule} – ${finding.nodeId || 'workflow'}`;
     const className = meta.workflowName;
     const failureNeeded = finding.severity === 'must' || finding.severity === 'should';
 
@@ -324,7 +324,7 @@ export function formatGithubActionsSummary(run: FlowLintRun): string {
     lines.push('## Issues');
     lines.push('');
     for (const finding of findings) {
-      const icon = finding.severity === 'must' ? 'ðŸ”´' : finding.severity === 'should' ? 'âš ï¸' : 'â„¹ï¸';
+      const icon = finding.severity === 'must' ? '🔴' : finding.severity === 'should' ? '⚠️' : 'ℹ️';
       lines.push(`${icon} **${finding.rule}** (${finding.severity}): ${finding.message}`);
       if (finding.nodeId) lines.push(`   - Node: \`${finding.nodeId}\``);
       if (finding.raw_details) {
