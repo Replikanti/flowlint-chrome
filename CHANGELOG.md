@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.22](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.21...flowlint-chrome-v0.10.22) (2025-12-31)
+
+
+### Bug Fixes
+
+* **chrome:** correct documentation link interpolation ([67e65fc](https://github.com/Replikanti/flowlint-chrome/commit/67e65fcd58dce4821911718e84db7658cdfcc7c6))
+* **chrome:** correct documentation link interpolation ([6c36be1](https://github.com/Replikanti/flowlint-chrome/commit/6c36be1eef7175437a8b21cc86f4b1cc6f746baf))
+
 ## [0.10.21](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.20...flowlint-chrome-v0.10.21) (2025-12-28)
 
 
