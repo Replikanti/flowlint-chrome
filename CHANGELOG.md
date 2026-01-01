@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.23](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.22...flowlint-chrome-v0.10.23) (2026-01-01)
+
+
+### Bug Fixes
+
+* **chrome:** address review comments and improve coverage ([7ec1fea](https://github.com/Replikanti/flowlint-chrome/commit/7ec1fea8ad414b16f53ea19dfdf9567a1d001a1a))
+
 ## [0.10.22](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.21...flowlint-chrome-v0.10.22) (2025-12-31)
 
 
