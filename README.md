@@ -1,6 +1,6 @@
 # FlowLint Chrome Extension
 
-![Coverage](https://img.shields.io/badge/coverage-33%25-red)
+![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
 
 A browser extension for the [n8n](https://n8n.io) workflow editor that provides real-time linting using the FlowLint engine.
 
