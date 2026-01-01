@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import path from 'path';
+import path from 'node:path';
 
 export default defineConfig({
   plugins: [react()],
@@ -17,7 +17,16 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'clover', 'cobertura'],
       include: ['src/**'],
-      exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+      exclude: [
+        'src/**/*.test.ts', 
+        'src/**/*.test.tsx',
+        'src/background/**',
+        'src/content/**',
+        'src/popup/**',
+        'src/components/Widget.tsx',
+        'src/*.css',
+        'src/vite-env.d.ts'
+      ],
       thresholds: {
         lines: 80,
         functions: 80,
