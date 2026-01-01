@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.10.24](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.23...flowlint-chrome-v0.10.24) (2026-01-01)
+
+
+### Bug Fixes
+
+* **scripts:** use ESM-compatible __dirname ([3e6ca0f](https://github.com/Replikanti/flowlint-chrome/commit/3e6ca0f738b730516b856030ce40aeb2918f354f))
+* **scripts:** use ESM-compatible __dirname ([5f0f9c6](https://github.com/Replikanti/flowlint-chrome/commit/5f0f9c6dd12ca85d97594f2de643913560abd477))
+* **scripts:** use node: prefix for built-in imports ([c3ad524](https://github.com/Replikanti/flowlint-chrome/commit/c3ad52452fd1b68acbd019a9883245272ad612ca))
+
 ## [0.10.23](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.22...flowlint-chrome-v0.10.23) (2026-01-01)
 
 
