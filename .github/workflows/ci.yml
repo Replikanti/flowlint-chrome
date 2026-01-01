@@ -10,6 +10,8 @@ on:
 jobs:
   CI:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
@@ -28,6 +30,17 @@ jobs:
 
       - name: Run tests with coverage
         run: npm run test:coverage
+
+      - name: Update Coverage Badge
+        if: github.ref == 'refs/heads/main'
+        run: |
+          node scripts/update-badge.js
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          # Commit only if changes exist
+          git diff --quiet && git diff --staged --quiet || git commit -m "docs: update coverage badge [skip ci]"
+          git push
 
       - name: Build
         run: npm run build
