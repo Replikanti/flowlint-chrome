@@ -1,0 +1,95 @@
+name: Chrome Token Check
+
+on:
+  schedule:
+    # Každé pondělí v 9:00 UTC (připomínka před expirací)
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Chrome Web Store Token
+        id: test
+        run: |
+          # Zkus získat access token pomocí refresh tokenu
+          RESPONSE=$(curl -s -X POST "https://oauth2.googleapis.com/token" \
+            -d "client_id=${{ secrets.CHROME_CLIENT_ID }}" \
+            -d "client_secret=${{ secrets.CHROME_CLIENT_SECRET }}" \
+            -d "refresh_token=${{ secrets.CHROME_REFRESH_TOKEN }}" \
+            -d "grant_type=refresh_token")
+
+          if echo "$RESPONSE" | grep -q "access_token"; then
+            echo "✅ Token is valid"
+            echo "valid=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Token is invalid or expired"
+            echo "Response: $RESPONSE"
+            echo "valid=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Issue if Token Invalid
+        if: steps.test.outputs.valid == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '🔑 Chrome Web Store token expired!';
+            const body = `## Token needs refresh
+
+            The Chrome Web Store refresh token has expired or is invalid.
+
+            ### How to fix:
+
+            1. Clone the repo locally
+            2. Run: \`node scripts/refresh-chrome-token.mjs\`
+            3. Follow the browser prompts
+            4. Token will be automatically updated in GitHub secrets
+
+            ### Alternative (manual):
+
+            \`\`\`bash
+            # 1. Open this URL in browser:
+            https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=urn:ietf:wg:oauth:2.0:oob&scope=https://www.googleapis.com/auth/chromewebstore&access_type=offline&prompt=consent
+
+            # 2. Copy the code and exchange for token:
+            curl -X POST "https://oauth2.googleapis.com/token" \\
+              -d "client_id=YOUR_CLIENT_ID" \\
+              -d "client_secret=YOUR_CLIENT_SECRET" \\
+              -d "code=AUTHORIZATION_CODE" \\
+              -d "grant_type=authorization_code" \\
+              -d "redirect_uri=urn:ietf:wg:oauth:2.0:oob"
+
+            # 3. Update the secret:
+            gh secret set CHROME_REFRESH_TOKEN -R Replikanti/flowlint-chrome
+            \`\`\`
+
+            ⚠️ In Testing mode, tokens expire every 7 days.
+            `;
+
+            // Check if issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'token-expired'
+            });
+
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['token-expired', 'urgent']
+              });
+              console.log('Created new issue');
+            } else {
+              console.log('Issue already exists');
+            }
+
+      - name: Notify Success
+        if: steps.test.outputs.valid == 'true'
+        run: |
+          echo "🎉 Chrome Web Store token is still valid!"
+          echo "Next check: Next Monday at 9:00 UTC"
