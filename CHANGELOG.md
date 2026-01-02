@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.11.0...flowlint-chrome-v0.12.0) (2026-01-02)
+
+
+### Features
+
+* **ci:** add Chrome Web Store token refresh script and monitoring ([6459e82](https://github.com/Replikanti/flowlint-chrome/commit/6459e823eb467f2512dbeabb0b9dbe1642c62da7))
+
 ## [0.11.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.24...flowlint-chrome-v0.11.0) (2026-01-02)
 
 
