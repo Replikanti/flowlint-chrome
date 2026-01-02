@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.24...flowlint-chrome-v0.11.0) (2026-01-02)
+
+
+### Features
+
+* **ci:** implement auto-merge coverage badge workflow ([93fb81c](https://github.com/Replikanti/flowlint-chrome/commit/93fb81c1636c02af7d20091b503979993f838ec6))
+
 ## [0.10.24](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.10.23...flowlint-chrome-v0.10.24) (2026-01-01)
 
 
