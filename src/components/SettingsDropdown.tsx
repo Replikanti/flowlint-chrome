@@ -10,7 +10,7 @@ export const SettingsDropdown = () => {
   // Load initial state
   useEffect(() => {
     chrome.storage.local.get('flowlintEnabled').then((result) => {
-      if (result.flowlintEnabled !== undefined) {
+      if (typeof result.flowlintEnabled === 'boolean') {
         setEnabled(result.flowlintEnabled);
       }
     });

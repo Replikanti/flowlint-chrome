@@ -23,7 +23,7 @@ export const Widget = () => {
   // Load enabled state
   useEffect(() => {
     chrome.storage.local.get('flowlintEnabled').then((result) => {
-      if (result.flowlintEnabled !== undefined) {
+      if (typeof result.flowlintEnabled === 'boolean') {
         setEnabled(result.flowlintEnabled);
       }
       setSettingsLoaded(true);
@@ -31,7 +31,7 @@ export const Widget = () => {
 
     const listener = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
       if (areaName === 'local' && changes.flowlintEnabled) {
-        setEnabled(changes.flowlintEnabled.newValue);
+        setEnabled(!!changes.flowlintEnabled.newValue);
       }
     };
     chrome.storage.onChanged.addListener(listener);
