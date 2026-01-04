@@ -18,14 +18,20 @@ export const SettingsDropdown = () => {
 
   // Close on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (event: Event) => {
+      // In Shadow DOM, we need composedPath to see the real target sequence
+      const path = event.composedPath();
+      if (dropdownRef.current && !path.includes(dropdownRef.current)) {
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+
+    // Attach to the root node (Shadow Root) if possible, otherwise document
+    const root = dropdownRef.current?.getRootNode() as Document | ShadowRoot || document;
+    root.addEventListener('mousedown', handleClickOutside);
+    
+    return () => root.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]); // Re-bind if needed, or just [] if ref stable. [] is fine.
 
   const toggleEnabled = () => {
     const newState = !enabled;
@@ -37,14 +43,17 @@ export const SettingsDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          isOpen ? "bg-zinc-100 dark:bg-zinc-800 text-brand-600" : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+        )}
         aria-label="Settings"
       >
         <Settings className="w-4 h-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 mt-1 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50">
+        <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50 animate-in fade-in zoom-in-95 duration-100">
           <div className="p-2 border-b border-zinc-100 dark:border-zinc-800">
             <h3 className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100 px-2">Settings</h3>
           </div>
@@ -54,14 +63,14 @@ export const SettingsDropdown = () => {
               aria-checked={enabled}
               aria-label="Enable analysis"
               onClick={toggleEnabled}
-              className="w-full flex items-center justify-between px-2 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded cursor-pointer"
+              className="w-full flex items-center justify-between px-2 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded cursor-pointer transition-colors"
             >
               <span>Enable analysis</span>
               <div className={cn(
-                "w-4 h-4 border rounded flex items-center justify-center transition-colors",
-                enabled ? "bg-brand-600 border-brand-600 text-white" : "border-zinc-300 dark:border-zinc-600"
+                "w-4 h-4 border rounded flex items-center justify-center transition-all duration-200",
+                enabled ? "bg-brand-600 border-brand-600 text-white" : "border-zinc-300 dark:border-zinc-600 bg-transparent"
               )}>
-                {enabled && <Check className="w-3 h-3" />}
+                <Check className={cn("w-3 h-3 transition-transform duration-200", enabled ? "scale-100" : "scale-0")} />
               </div>
             </button>
           </div>

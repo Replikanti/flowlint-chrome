@@ -162,13 +162,14 @@ export const Widget = () => {
         {/* Header */}
         <header className="h-14 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 flex-shrink-0 z-10">
            <div className="flex items-center gap-2">
-              <SettingsDropdown />
               <div className="w-8 h-8 bg-brand-50 dark:bg-brand-900/20 rounded-lg flex items-center justify-center border border-brand-100 dark:border-brand-800">
                  <img src={chrome.runtime.getURL('icon-32.png')} className="w-5 h-5 rounded-sm" alt="Logo" />
               </div>
               <h1 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">FlowLint</h1>
            </div>
            <div className="flex items-center gap-1">
+              <SettingsDropdown />
+              <div className="w-[1px] h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
               <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
                  {isMinimized ? <Maximize2 className="w-4 h-4"/> : <Minimize2 className="w-4 h-4"/>}
               </button>
