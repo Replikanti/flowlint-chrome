@@ -6,15 +6,37 @@ import { AlertCircle, CheckCircle, AlertTriangle, Info, ExternalLink, ClipboardP
 import type { Finding } from '@replikanti/flowlint-core';
 
 import { ExportPanel } from './ExportPanel';
+import { SettingsDropdown } from './SettingsDropdown';
+import { cn } from '../utils/cn';
 
 export const Widget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [enabled, setEnabled] = useState(true);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   
   const [input, setInput] = useState('');
   const [results, setResults] = useState<Finding[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [clipboardWorkflow, setClipboardWorkflow] = useState<string | null>(null);
+
+  // Load enabled state
+  useEffect(() => {
+    chrome.storage.local.get('flowlintEnabled').then((result) => {
+      if (result.flowlintEnabled !== undefined) {
+        setEnabled(result.flowlintEnabled);
+      }
+      setSettingsLoaded(true);
+    });
+
+    const listener = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
+      if (areaName === 'local' && changes.flowlintEnabled) {
+        setEnabled(changes.flowlintEnabled.newValue);
+      }
+    };
+    chrome.storage.onChanged.addListener(listener);
+    return () => chrome.storage.onChanged.removeListener(listener);
+  }, []);
 
   const isValidWorkflow = (text: string) => {
     if (!text || text.length < 10) return false;
@@ -30,6 +52,8 @@ export const Widget = () => {
   };
 
   const checkClipboard = useCallback(async () => {
+    if (!settingsLoaded || !enabled) return; // Skip if disabled or loading
+
     try {
       const text = await navigator.clipboard.readText();
       if (isValidWorkflow(text)) {
@@ -40,9 +64,10 @@ export const Widget = () => {
     } catch (e) {
       // Permission denied or empty
     }
-  }, []);
+  }, [enabled, settingsLoaded]);
 
   useEffect(() => {
+    if (!settingsLoaded) return;
     const check = () => checkClipboard();
     window.addEventListener('focus', check);
     check();
@@ -51,7 +76,7 @@ export const Widget = () => {
       window.removeEventListener('focus', check);
       clearInterval(interval);
     };
-  }, [isOpen, checkClipboard]);
+  }, [isOpen, checkClipboard, settingsLoaded]);
 
   const analyzeWorkflow = async (jsonContent: string) => {
     setLoading(true);
@@ -93,7 +118,7 @@ export const Widget = () => {
   if (!isOpen) {
     return (
       <div className="flex flex-col items-end gap-2 font-sans">
-        {clipboardWorkflow && (
+        {clipboardWorkflow && enabled && (
            <button 
                 type="button"
                 className="bg-brand-600 text-white text-xs px-3 py-1.5 rounded-lg shadow-lg animate-bounce cursor-pointer font-bold border border-brand-700"
@@ -103,8 +128,12 @@ export const Widget = () => {
         )}
         <button 
           onClick={() => setIsOpen(true)}
-          className="w-14 h-14 bg-brand-500 hover:bg-brand-600 rounded-full shadow-xl flex items-center justify-center text-white transition-transform hover:scale-105 border-2 border-white dark:border-zinc-800"
+          className={cn(
+            "w-14 h-14 bg-brand-500 hover:bg-brand-600 rounded-full shadow-xl flex items-center justify-center text-white transition-transform hover:scale-105 border-2 border-white dark:border-zinc-800",
+            !enabled && "muted"
+          )}
           aria-label="Open FlowLint"
+          title={!enabled ? "FlowLint paused - click settings to enable" : "Open FlowLint"}
         >
           <img src={chrome.runtime.getURL('icon-32.png')} className="w-8 h-8 rounded" alt="FlowLint Logo" />
         </button>
@@ -133,6 +162,7 @@ export const Widget = () => {
         {/* Header */}
         <header className="h-14 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 flex-shrink-0 z-10">
            <div className="flex items-center gap-2">
+              <SettingsDropdown />
               <div className="w-8 h-8 bg-brand-50 dark:bg-brand-900/20 rounded-lg flex items-center justify-center border border-brand-100 dark:border-brand-800">
                  <img src={chrome.runtime.getURL('icon-32.png')} className="w-5 h-5 rounded-sm" alt="Logo" />
               </div>

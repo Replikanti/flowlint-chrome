@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Copy, CheckCircle } from 'lucide-react';
+import { Download, Copy, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import type { Finding } from '@replikanti/flowlint-core';
 import {
   analysisResultsToRun,
@@ -21,6 +21,7 @@ interface ExportPanelProps {
 
 export const ExportPanel = ({ results, workflowName = 'workflow' }: ExportPanelProps) => {
   const [copiedFormat, setCopiedFormat] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const run = analysisResultsToRun(results, workflowName);
 
@@ -36,12 +37,32 @@ export const ExportPanel = ({ results, workflowName = 'workflow' }: ExportPanelP
     downloadAsFile(content, filename, mimeType);
   };
 
+  if (!isExpanded) {
+    return (
+      <div className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)]">
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="w-full flex items-center justify-center gap-2 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded transition-colors"
+        >
+          <ChevronDown className="w-4 h-4" />
+          Export Results
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2.5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)]">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
-          Export
-        </h3>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="flex items-center gap-1 text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide hover:text-brand-600 transition-colors"
+          >
+            <ChevronUp className="w-3.5 h-3.5" />
+            Hide Export
+          </button>
+        </div>
         <p className="text-[9px] text-zinc-400 dark:text-zinc-600">
           Client-side
         </p>

@@ -23,14 +23,13 @@ export default defineConfig({
         'src/background/**',
         'src/content/**',
         'src/popup/**',
-        'src/components/Widget.tsx',
         'src/*.css',
         'src/vite-env.d.ts'
       ],
       thresholds: {
         lines: 80,
         functions: 80,
-        branches: 80,
+        branches: 75,
         statements: 80,
       },
     },

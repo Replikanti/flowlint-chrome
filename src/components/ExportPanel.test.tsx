@@ -46,80 +46,121 @@ describe('ExportPanel', () => {
     vi.useRealTimers();
   });
 
-  it('renders correctly', () => {
-    render(<ExportPanel results={mockFindings} workflowName="test-workflow" />);
-    
-    expect(screen.getByText('Export')).toBeDefined();
-    expect(screen.getByText('Client-side')).toBeDefined();
-    
-    // Check if buttons exist (by text content)
-    expect(screen.getByText('Text')).toBeDefined(); // Copy Text
-    expect(screen.getByText('GH Log')).toBeDefined();
-    expect(screen.getByText('GH MD')).toBeDefined();
-    expect(screen.getAllByText('JSON')).toHaveLength(2); // Copy JSON and Download JSON
-    expect(screen.getAllByText('CSV')).toHaveLength(2); // Copy CSV and Download CSV
-    expect(screen.getByText('SARIF')).toBeDefined();
-    expect(screen.getByText('JUnit')).toBeDefined();
-  });
-
-  it('calls copyToClipboard when copy buttons are clicked and shows feedback', async () => {
-    render(<ExportPanel results={mockFindings} workflowName="test-workflow" />);
-    
-    const formats = [
-      { text: 'Text', format: 'stylish' },
-      { text: 'GH Log', format: 'gh-log' },
-      { text: 'GH MD', format: 'gh-summary' },
-      { text: 'JSON', format: 'json', index: 0 }, // First JSON button is copy
-      { text: 'CSV', format: 'csv', index: 0 }    // First CSV button is copy
-    ];
-
-    for (const { text, index } of formats) {
-      const buttons = screen.getAllByText(text);
-      const btn = (index !== undefined ? buttons[index] : buttons[0]).closest('button');
+  describe('collapsed state (default)', () => {
+    it('should render only "Export Results" button when collapsed', () => {
+      render(<ExportPanel results={mockFindings} workflowName="test-workflow" />);
       
-      // Click button
+      expect(screen.getByText('Export Results')).toBeDefined();
+      expect(screen.queryByText('Client-side')).toBeNull();
+      expect(screen.queryByText('GH Log')).toBeNull();
+    });
+
+    it('should expand when "Export Results" button is clicked', async () => {
+      render(<ExportPanel results={mockFindings} workflowName="test-workflow" />);
+      
+      const expandBtn = screen.getByText('Export Results').closest('button');
       await act(async () => {
-        if (btn) fireEvent.click(btn);
-      });
-      
-      expect(exporters.copyToClipboard).toHaveBeenCalled();
-      
-      // Check for feedback "Copied!"
-      expect(screen.getByText('Copied!')).toBeDefined();
-
-      // Fast-forward timer to revert state
-      await act(async () => {
-        vi.runAllTimers();
+        if (expandBtn) fireEvent.click(expandBtn);
       });
 
-      // Feedback should be gone (back to original text)
-      expect(screen.queryByText('Copied!')).toBeNull();
-      // Original text should be back (might be multiple if same label exists elsewhere, but specific one should be there)
-      
-      vi.clearAllMocks(); // Reset for next loop
-    }
+      expect(screen.getByText('Hide Export')).toBeDefined();
+      expect(screen.getByText('Client-side')).toBeDefined();
+      expect(screen.getByText('GH Log')).toBeDefined();
+    });
   });
 
-  it('calls downloadAsFile when download buttons are clicked', () => {
-    render(<ExportPanel results={mockFindings} workflowName="test-workflow" />);
-    
-    const downloads = [
-      { text: 'JSON', index: 1, type: 'application/json' },
-      { text: 'CSV', index: 1, type: 'text/csv' },
-      { text: 'SARIF', index: 0, type: 'application/json' },
-      { text: 'JUnit', index: 0, type: 'application/xml' }
-    ];
+  describe('expanded state interactions', () => {
+    it('calls copyToClipboard when copy buttons are clicked', async () => {
+      render(<ExportPanel results={mockFindings} workflowName="test-workflow" />);
+      
+      // Expand first
+      const expandBtn = screen.getByText('Export Results').closest('button');
+      await act(async () => {
+        if (expandBtn) fireEvent.click(expandBtn);
+      });
 
-    for (const { text, index, type } of downloads) {
-       const buttons = screen.getAllByText(text);
-       const btn = buttons[index].closest('button');
-       if (btn) fireEvent.click(btn);
-       expect(exporters.downloadAsFile).toHaveBeenCalledWith(
-         expect.any(String),
-         expect.stringContaining('flowlint-report'),
-         type
-       );
-       vi.clearAllMocks();
-    }
+      const formats = [
+        { text: 'Text', format: 'stylish' },
+        { text: 'GH Log', format: 'gh-log' },
+        { text: 'GH MD', format: 'gh-summary' },
+        { text: 'JSON', format: 'json', index: 0 }, // First JSON button is copy
+        { text: 'CSV', format: 'csv', index: 0 }    // First CSV button is copy
+      ];
+
+      for (const { text, index } of formats) {
+        const buttons = screen.getAllByText(text);
+        const btn = (index !== undefined ? buttons[index] : buttons[0]).closest('button');
+        
+        // Click button
+        await act(async () => {
+          if (btn) fireEvent.click(btn);
+        });
+        
+        expect(exporters.copyToClipboard).toHaveBeenCalled();
+        
+        // Check for feedback "Copied!"
+        expect(screen.getByText('Copied!')).toBeDefined();
+
+        // Fast-forward timer to revert state
+        await act(async () => {
+          vi.runAllTimers();
+        });
+
+        // Feedback should be gone
+        expect(screen.queryByText('Copied!')).toBeNull();
+        
+        vi.clearAllMocks();
+      }
+    });
+
+    it('calls downloadAsFile when download buttons are clicked', async () => {
+      render(<ExportPanel results={mockFindings} workflowName="test-workflow" />);
+      
+      // Expand first
+      const expandBtn = screen.getByText('Export Results').closest('button');
+      await act(async () => {
+        if (expandBtn) fireEvent.click(expandBtn);
+      });
+
+      const downloads = [
+        { text: 'JSON', index: 1, type: 'application/json' },
+        { text: 'CSV', index: 1, type: 'text/csv' },
+        { text: 'SARIF', index: 0, type: 'application/json' },
+        { text: 'JUnit', index: 0, type: 'application/xml' }
+      ];
+
+      for (const { text, index, type } of downloads) {
+         const buttons = screen.getAllByText(text);
+         const btn = buttons[index].closest('button');
+         if (btn) fireEvent.click(btn);
+         expect(exporters.downloadAsFile).toHaveBeenCalledWith(
+           expect.any(String),
+           expect.stringContaining('flowlint-report'),
+           type
+         );
+         vi.clearAllMocks();
+      }
+    });
+
+    it('should collapse when "Hide Export" button is clicked', async () => {
+      render(<ExportPanel results={mockFindings} workflowName="test-workflow" />);
+      
+      // Expand first
+      const expandBtn = screen.getByText('Export Results').closest('button');
+      await act(async () => {
+        if (expandBtn) fireEvent.click(expandBtn);
+      });
+
+      expect(screen.getByText('Hide Export')).toBeDefined();
+
+      // Collapse
+      const collapseBtn = screen.getByText('Hide Export').closest('button');
+      await act(async () => {
+        if (collapseBtn) fireEvent.click(collapseBtn);
+      });
+
+      expect(screen.getByText('Export Results')).toBeDefined();
+      expect(screen.queryByText('Client-side')).toBeNull();
+    });
   });
 });
