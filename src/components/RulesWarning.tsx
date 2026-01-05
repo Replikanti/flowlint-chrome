@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { RULES_METADATA } from '@replikanti/flowlint-core';
-import { cn } from '../utils/cn';
 
 interface RulesWarningProps {
   enabledRules: Record<string, boolean>;
@@ -17,13 +16,16 @@ export const RulesWarning = ({ enabledRules }: RulesWarningProps) => {
   // Don't show if all rules are enabled
   if (skippedRules.length === 0) return null;
 
-  const formatRuleName = (name: string) => name.replace(/_/g, ' ');
+  const formatRuleName = (name: string) => name.replaceAll('_', ' ');
 
   return (
     <div
       className="relative"
+      role="tooltip"
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
+      onFocus={() => setShowTooltip(true)}
+      onBlur={() => setShowTooltip(false)}
     >
       <div className="flex items-center gap-1 px-1.5 py-0.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded text-amber-600 dark:text-amber-400 cursor-help">
         <AlertTriangle className="w-3 h-3" />

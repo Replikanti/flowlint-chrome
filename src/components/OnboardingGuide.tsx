@@ -196,9 +196,9 @@ export const OnboardingGuide = ({ onComplete }: OnboardingGuideProps) => {
 
           {/* Step indicators */}
           <div className="flex items-center justify-center gap-2 mt-6">
-            {steps.map((_, index) => (
+            {steps.map((s, index) => (
               <button
-                key={index}
+                key={s.title}
                 data-testid="step-indicator"
                 onClick={() => setCurrentStep(index)}
                 className={cn(

@@ -41,8 +41,14 @@ async function getCredentials() {
 }
 
 function openBrowser(url) {
-  const cmd = process.platform === 'darwin' ? 'open' :
-              process.platform === 'win32' ? 'start' : 'xdg-open';
+  let cmd;
+  if (process.platform === 'darwin') {
+    cmd = 'open';
+  } else if (process.platform === 'win32') {
+    cmd = 'start';
+  } else {
+    cmd = 'xdg-open';
+  }
   exec(`${cmd} "${url}"`);
 }
 
@@ -126,59 +132,55 @@ async function startServer() {
   });
 }
 
-async function main() {
-  console.log('🔑 Chrome Web Store Token Refresh\n');
-  console.log('='.repeat(40));
+console.log('🔑 Chrome Web Store Token Refresh\n');
+console.log('='.repeat(40));
 
-  await getCredentials();
+await getCredentials();
 
-  // Vytvoř OAuth URL
-  const authUrl = new URL('https://accounts.google.com/o/oauth2/auth');
-  authUrl.searchParams.set('response_type', 'code');
-  authUrl.searchParams.set('client_id', CONFIG.clientId);
-  authUrl.searchParams.set('redirect_uri', `http://localhost:${CONFIG.port}/callback`);
-  authUrl.searchParams.set('scope', CONFIG.scope);
-  authUrl.searchParams.set('access_type', 'offline');
-  authUrl.searchParams.set('prompt', 'consent'); // Force new refresh token
+// Vytvoř OAuth URL
+const authUrl = new URL('https://accounts.google.com/o/oauth2/auth');
+authUrl.searchParams.set('response_type', 'code');
+authUrl.searchParams.set('client_id', CONFIG.clientId);
+authUrl.searchParams.set('redirect_uri', `http://localhost:${CONFIG.port}/callback`);
+authUrl.searchParams.set('scope', CONFIG.scope);
+authUrl.searchParams.set('access_type', 'offline');
+authUrl.searchParams.set('prompt', 'consent'); // Force new refresh token
 
-  // Spusť server a otevři browser
-  console.log('\n🚀 Opening browser for authorization...');
-  console.log('   (If browser doesn\'t open, visit this URL manually)\n');
-  console.log(`   ${authUrl.toString()}\n`);
+// Spusť server a otevři browser
+console.log('\n🚀 Opening browser for authorization...');
+console.log('   (If browser doesn\'t open, visit this URL manually)\n');
+console.log(`   ${authUrl.toString()}\n`);
 
-  const serverPromise = startServer();
+const serverPromise = startServer();
 
-  // Dej serveru chvilku nastartovat
-  await new Promise(r => setTimeout(r, 500));
-  openBrowser(authUrl.toString());
+// Dej serveru chvilku nastartovat
+await new Promise(r => setTimeout(r, 500));
+openBrowser(authUrl.toString());
 
-  try {
-    const code = await serverPromise;
-    console.log('\n✅ Authorization code received!');
+try {
+  const code = await serverPromise;
+  console.log('\n✅ Authorization code received!');
 
-    console.log('\n🔄 Exchanging code for tokens...');
-    const tokens = await exchangeCodeForToken(code);
+  console.log('\n🔄 Exchanging code for tokens...');
+  const tokens = await exchangeCodeForToken(code);
 
-    if (!tokens.refresh_token) {
-      throw new Error('No refresh_token in response. Try revoking app access at https://myaccount.google.com/permissions and try again.');
-    }
-
-    console.log('\n✅ Tokens received!');
-    console.log(`   Access token: ${tokens.access_token?.substring(0, 20)}...`);
-    console.log(`   Refresh token: ${tokens.refresh_token?.substring(0, 20)}...`);
-    console.log(`   Expires in: ${tokens.expires_in} seconds`);
-
-    // Aktualizuj GitHub secret
-    updateGitHubSecret('CHROME_REFRESH_TOKEN', tokens.refresh_token);
-
-    console.log('\n🎉 Done! Token has been refreshed.\n');
-    console.log('⚠️  Remember: In Testing mode, token expires in 7 days.');
-    console.log('   Set a reminder to run this script again.\n');
-
-  } catch (error) {
-    console.error('\n❌ Error:', error.message);
-    process.exit(1);
+  if (!tokens.refresh_token) {
+    throw new Error('No refresh_token in response. Try revoking app access at https://myaccount.google.com/permissions and try again.');
   }
-}
 
-main();
+  console.log('\n✅ Tokens received!');
+  console.log(`   Access token: ${tokens.access_token?.substring(0, 20)}...`);
+  console.log(`   Refresh token: ${tokens.refresh_token?.substring(0, 20)}...`);
+  console.log(`   Expires in: ${tokens.expires_in} seconds`);
+
+  // Aktualizuj GitHub secret
+  updateGitHubSecret('CHROME_REFRESH_TOKEN', tokens.refresh_token);
+
+  console.log('\n🎉 Done! Token has been refreshed.\n');
+  console.log('⚠️  Remember: In Testing mode, token expires in 7 days.');
+  console.log('   Set a reminder to run this script again.\n');
+
+} catch (error) {
+  console.error('\n❌ Error:', error.message);
+  process.exit(1);
+}

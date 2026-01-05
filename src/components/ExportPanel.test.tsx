@@ -89,7 +89,7 @@ describe('ExportPanel', () => {
 
       for (const { text, index } of formats) {
         const buttons = screen.getAllByText(text);
-        const btn = (index !== undefined ? buttons[index] : buttons[0]).closest('button');
+        const btn = (index === undefined ? buttons[0] : buttons[index]).closest('button');
         
         // Click button
         await act(async () => {

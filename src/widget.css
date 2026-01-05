@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 /* Enable class-based dark mode for Tailwind v4 */
+/* stylelint-disable-next-line at-rule-no-unknown */
 @variant dark (&:where(.dark, .dark *));
 
 @theme {

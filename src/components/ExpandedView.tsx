@@ -51,6 +51,8 @@ export const ExpandedView = ({
     <dialog
       ref={dialogRef}
       open
+      role="dialog"
+      aria-modal="true"
       tabIndex={-1}
       onKeyDown={handleKeyDown}
       className="fixed inset-0 z-[2147483647] flex items-center justify-center p-8 bg-transparent w-full h-full max-w-none m-0 outline-none"

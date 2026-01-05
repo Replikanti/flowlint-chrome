@@ -257,7 +257,7 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
                           {rule.severity}
                         </span>
                         <span className="text-[9px] text-zinc-600 dark:text-zinc-400 truncate flex-1" title={rule.name}>
-                          {rule.name.replace(/_/g, ' ')}
+                          {rule.name.replaceAll('_', ' ')}
                         </span>
                       </label>
                     ))}

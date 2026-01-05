@@ -38,8 +38,9 @@ describe('RulesWarning', () => {
     render(<RulesWarning enabledRules={{ R1: true, R2: false, R3: false }} />);
 
     // Hover over the warning
-    const warning = screen.getByText('2 skipped').parentElement!;
-    fireEvent.mouseEnter(warning.parentElement!);
+    const warning = screen.getByText('2 skipped').parentElement;
+    if (!warning?.parentElement) throw new Error('Parent element not found');
+    fireEvent.mouseEnter(warning.parentElement);
 
     // Should show checked rules
     expect(screen.getByText('Checked (1)')).toBeDefined();
@@ -54,14 +55,15 @@ describe('RulesWarning', () => {
   it('hides tooltip on mouse leave', () => {
     render(<RulesWarning enabledRules={{ R1: false, R2: true, R3: true }} />);
 
-    const warning = screen.getByText('1 skipped').parentElement!;
+    const warning = screen.getByText('1 skipped').parentElement;
+    if (!warning?.parentElement) throw new Error('Parent element not found');
 
     // Show tooltip
-    fireEvent.mouseEnter(warning.parentElement!);
+    fireEvent.mouseEnter(warning.parentElement);
     expect(screen.getByText('Skipped (1)')).toBeDefined();
 
     // Hide tooltip
-    fireEvent.mouseLeave(warning.parentElement!);
+    fireEvent.mouseLeave(warning.parentElement);
     expect(screen.queryByText('Skipped (1)')).toBeNull();
   });
 });

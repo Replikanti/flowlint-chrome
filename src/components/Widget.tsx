@@ -163,7 +163,7 @@ export const Widget = () => {
 
       // Build custom config based on enabled rules
       const currentEnabledRules = enabledRulesRef.current;
-      const customConfig: FlowLintConfig = JSON.parse(JSON.stringify(defaultConfig));
+      const customConfig: FlowLintConfig = structuredClone(defaultConfig);
 
       // Apply rule enabled/disabled state from settings
       for (const rule of RULES_METADATA) {
@@ -229,7 +229,6 @@ export const Widget = () => {
   };
 
   const closeWidget = () => setIsOpen(false);
-  const closeExpandedView = () => setIsExpandedView(false);
 
   const renderInnerContent = (isModal = false, onClose = closeWidget) => {
     const showContent = !isMinimized || isModal;
