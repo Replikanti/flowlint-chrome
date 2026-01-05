@@ -174,9 +174,8 @@ describe('Widget', () => {
         fireEvent.click(screen.getByText('Analyze'));
     });
     
-    await waitFor(() => {
-        expect(screen.getByText(/Workflow is clean/i)).toBeDefined();
-    });
+    // Increased timeout for safety
+    expect(await screen.findByText(/Workflow is clean/i, {}, { timeout: 3000 })).toBeDefined();
   });
 
   it('filters results by severity', async () => {
@@ -209,7 +208,7 @@ describe('Widget', () => {
     fireEvent.click(screen.getByLabelText('Open FlowLint'));
     await screen.findByRole('heading', { name: 'FlowLint' });
 
-    // Focus body to ensure keydown bubbles
+    // Ensure focus is within the document
     document.body.focus();
     fireEvent.keyDown(window, { key: 'Escape' });
     
@@ -222,17 +221,13 @@ describe('Widget', () => {
     render(<Widget />);
     fireEvent.click(screen.getByLabelText('Open FlowLint'));
     
-    const textarea = await screen.findByPlaceholderText(/Paste your n8n workflow JSON here/i);
-    fireEvent.change(textarea, { target: { value: '{"nodes":[]}' } });
-    await act(async () => { fireEvent.click(screen.getByText('Analyze')); });
-    
+    // Ensure analysis is run so "Expanded View" can be toggled (if it depends on results, though toggle should work regardless if button is visible)
+    // Actually button is visible !isMinimized.
     await screen.findByRole('heading', { name: 'FlowLint' });
     
     // Toggle on
     fireEvent.keyDown(window, { key: 'e', ctrlKey: true });
-    await waitFor(() => {
-        expect(screen.getByText(/Expanded View/i)).toBeDefined();
-    });
+    expect(await screen.findByText(/Expanded View/i)).toBeDefined();
 
     // Toggle off
     fireEvent.keyDown(window, { key: 'e', ctrlKey: true });

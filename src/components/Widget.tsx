@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { parseN8n, runAllRules, defaultConfig } from '@replikanti/flowlint-core';
 import type { Finding } from '@replikanti/flowlint-core';
-import { X, Minimize2, Maximize2, Eraser, FileJson, ListChecks, ClipboardPaste } from 'lucide-react';
+import { X, Minimize2, Maximize2, Maximize, Minimize, Eraser, FileJson, ListChecks, ClipboardPaste } from 'lucide-react';
 
 import { SettingsDropdown } from './SettingsDropdown';
 import { FilterBar } from './FilterBar';
 import { FindingsList } from './FindingsList';
 import { ExpandedView } from './ExpandedView';
 import { WidgetButton } from './WidgetButton';
+import { ExportPanel } from './ExportPanel';
 import { cn } from '../utils/cn';
 
 export const Widget = () => {
@@ -56,6 +57,24 @@ export const Widget = () => {
     chrome.storage.onChanged.addListener(listener);
     return () => chrome.storage.onChanged.removeListener(listener);
   }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isExpandedView) setIsExpandedView(false);
+        else if (isOpen) setIsOpen(false);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        if (isOpen && !isMinimized) {
+          e.preventDefault();
+          setIsExpandedView(prev => !prev);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isExpandedView, isMinimized]);
 
   // Auto-analyze when clipboard content changes
   useEffect(() => {
@@ -195,7 +214,7 @@ export const Widget = () => {
 
               {!isMinimized && (
                 <button onClick={() => setIsExpandedView(!isExpandedView)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isExpandedView ? "Contract" : "Expand"}>
-                   <Maximize2 className="w-4 h-4"/>
+                   {isExpandedView && !isModal ? <Minimize className="w-4 h-4"/> : <Maximize className="w-4 h-4"/>}
                 </button>
               )}
 
@@ -256,6 +275,7 @@ export const Widget = () => {
                     </div>
                     <FilterBar counts={counts} filters={filters} onToggle={toggleFilter} />
                     <FindingsList findings={filteredFindings} isFiltered={Object.values(filters).some(v => !v)} />
+                    {results.length > 0 && <ExportPanel results={results} workflowName="n8n-workflow" />}
                  </div>
               ) : (
                  <div className="card flex-1 flex flex-col items-center justify-center gap-4 text-center p-8 bg-white dark:bg-zinc-900">
