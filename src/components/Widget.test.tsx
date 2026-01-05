@@ -162,20 +162,25 @@ describe('Widget', () => {
   });
 
   it('shows success state when no findings', async () => {
-    vi.mocked(runAllRules).mockReturnValueOnce([]);
-    
+    vi.mocked(runAllRules).mockReturnValue([]);
+
     render(<Widget />);
     fireEvent.click(screen.getByLabelText('Open FlowLint'));
-    
+
     const textarea = await screen.findByPlaceholderText(/Paste your n8n workflow JSON here/i);
     fireEvent.change(textarea, { target: { value: '{"nodes":[]}' } });
-    
+
+    const analyzeButton = screen.getByText('Analyze');
     await act(async () => {
-        fireEvent.click(screen.getByText('Analyze'));
+        fireEvent.click(analyzeButton);
+        // Allow async analyzeWorkflow to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
     });
-    
-    // Increased timeout for safety
-    expect(await screen.findByText(/Workflow is clean/i, {}, { timeout: 3000 })).toBeDefined();
+
+    // Wait for the success state to appear
+    await waitFor(() => {
+      expect(screen.getByText(/Workflow is clean/i)).toBeDefined();
+    }, { timeout: 3000 });
   });
 
   it('filters results by severity', async () => {

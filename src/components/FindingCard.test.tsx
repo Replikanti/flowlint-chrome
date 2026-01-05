@@ -28,7 +28,7 @@ describe('FindingCard', () => {
   it('renders documentation link when available', () => {
     // R1 should have a default doc link generated if not provided
     render(<FindingCard finding={mockFinding} />);
-    const link = screen.getByLabelText('View documentation');
+    const link = screen.getByLabelText('View documentation for rule R1');
     expect(link).toBeDefined();
     expect(link.getAttribute('href')).toContain('R1');
   });
