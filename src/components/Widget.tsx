@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { parseN8n, runAllRules, defaultConfig } from '@replikanti/flowlint-core';
-import type { Finding } from '@replikanti/flowlint-core';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { parseN8n, runAllRules, defaultConfig, RULES_METADATA } from '@replikanti/flowlint-core';
+import type { Finding, FlowLintConfig } from '@replikanti/flowlint-core';
 import { X, Minimize2, Maximize2, Maximize, Minimize, Eraser, FileJson, ListChecks, ClipboardPaste } from 'lucide-react';
 
 import { SettingsDropdown } from './SettingsDropdown';
@@ -18,8 +18,15 @@ export const Widget = () => {
   const [enabled, setEnabled] = useState(true);
   const [autoAnalyze, setAutoAnalyze] = useState(true);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
-  
+  const [enabledRules, setEnabledRules] = useState<Record<string, boolean>>({});
+
   const [filters, setFilters] = useState({ must: true, should: true, nit: true });
+
+  // Use ref to access latest enabledRules in analyzeWorkflow without recreating it
+  const enabledRulesRef = useRef(enabledRules);
+  useEffect(() => {
+    enabledRulesRef.current = enabledRules;
+  }, [enabledRules]);
 
   const [input, setInput] = useState('');
   const [results, setResults] = useState<Finding[] | null>(null);
@@ -28,7 +35,7 @@ export const Widget = () => {
 
   // Load settings
   useEffect(() => {
-    chrome.storage.local.get(['flowlintEnabled', 'autoAnalyze', 'severityFilters']).then((result) => {
+    chrome.storage.local.get(['flowlintEnabled', 'autoAnalyze', 'severityFilters', 'enabledRules']).then((result) => {
       if (typeof result.flowlintEnabled === 'boolean') {
         setEnabled(result.flowlintEnabled);
       }
@@ -38,6 +45,9 @@ export const Widget = () => {
       if (result.severityFilters && typeof result.severityFilters === 'object') {
         setFilters(result.severityFilters as { must: boolean; should: boolean; nit: boolean });
       }
+      if (result.enabledRules && typeof result.enabledRules === 'object') {
+        setEnabledRules(result.enabledRules as Record<string, boolean>);
+      }
       setSettingsLoaded(true);
     });
 
@@ -46,6 +56,7 @@ export const Widget = () => {
       if (changes.flowlintEnabled) setEnabled(!!changes.flowlintEnabled.newValue);
       if (changes.autoAnalyze) setAutoAnalyze(!!changes.autoAnalyze.newValue);
       if (changes.severityFilters) setFilters(changes.severityFilters.newValue as { must: boolean; should: boolean; nit: boolean });
+      if (changes.enabledRules) setEnabledRules(changes.enabledRules.newValue as Record<string, boolean>);
     };
     chrome.storage.onChanged.addListener(listener);
     return () => chrome.storage.onChanged.removeListener(listener);
@@ -127,10 +138,25 @@ export const Widget = () => {
     setLoading(true);
     try {
       const graph = parseN8n(jsonContent);
-      const findings = runAllRules(graph, { 
-        cfg: defaultConfig, 
-        path: 'clipboard.json', 
-        nodeLines: graph.meta.nodeLines as Record<string, number> | undefined 
+
+      // Build custom config based on enabled rules
+      const currentEnabledRules = enabledRulesRef.current;
+      const customConfig: FlowLintConfig = JSON.parse(JSON.stringify(defaultConfig));
+
+      // Apply rule enabled/disabled state from settings
+      for (const rule of RULES_METADATA) {
+        const ruleName = rule.name as keyof typeof customConfig.rules;
+        if (ruleName in customConfig.rules) {
+          // If rule is explicitly disabled (false), disable it; otherwise keep enabled
+          const isEnabled = currentEnabledRules[rule.id] !== false;
+          customConfig.rules[ruleName].enabled = isEnabled;
+        }
+      }
+
+      const findings = runAllRules(graph, {
+        cfg: customConfig,
+        path: 'clipboard.json',
+        nodeLines: graph.meta.nodeLines as Record<string, number> | undefined
       });
       setResults(findings);
     } catch (err) {

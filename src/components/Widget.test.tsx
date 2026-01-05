@@ -46,7 +46,11 @@ vi.mock('@replikanti/flowlint-core', () => ({
   runAllRules: vi.fn().mockReturnValue([
     { rule: 'R1', severity: 'must', message: 'Test Error', nodeId: '1', path: 'wf.json' }
   ]),
-  defaultConfig: {},
+  defaultConfig: { rules: {} },
+  RULES_METADATA: [
+    { id: 'R1', name: 'rate_limit_retry', severity: 'must', description: 'Test', details: '' },
+    { id: 'R2', name: 'error_handling', severity: 'must', description: 'Test', details: '' },
+  ],
 }));
 
 describe('Widget', () => {
