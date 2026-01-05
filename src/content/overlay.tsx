@@ -38,9 +38,11 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   // Mount Point inside Shadow DOM
   const rootContainer = document.createElement('div');
 
-  // Detect and apply dark mode based on system preference
-  const updateDarkMode = () => {
-    const isDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
+  // Detect and apply dark mode based on system preference or settings
+  const applyTheme = (t: string) => {
+    const isSystemDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = t === 'dark' || (t === 'system' && isSystemDark);
+    
     if (isDark) {
       rootContainer.classList.add('dark');
     } else {
@@ -48,11 +50,22 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
     }
   };
 
-  // Initial dark mode detection
-  updateDarkMode();
+  // Initial theme detection
+  const initialTheme = await chrome.storage.local.get('theme');
+  applyTheme(typeof initialTheme.theme === 'string' ? initialTheme.theme : 'system');
 
   // Listen for system preference changes
-  globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateDarkMode);
+  globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
+    const res = await chrome.storage.local.get('theme');
+    applyTheme(typeof res.theme === 'string' ? res.theme : 'system');
+  });
+
+  // Listen for storage changes
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && changes.theme && typeof changes.theme.newValue === 'string') {
+      applyTheme(changes.theme.newValue);
+    }
+  });
 
   shadow.appendChild(rootContainer);
 
@@ -63,6 +76,63 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   // --- 2. React Component ---
   const OverlayApp = () => {
     const [isVisible, setIsVisible] = React.useState(false);
+
+    // Apply position logic
+    React.useEffect(() => {
+      const updatePosition = (pos: string) => {
+        const h = document.getElementById(MOUNT_POINT_ID);
+        if (!h) return;
+        
+        // Reset
+        h.style.top = '';
+        h.style.bottom = '';
+        h.style.left = '';
+        h.style.right = '';
+        h.style.alignItems = '';
+
+        switch (pos) {
+          case 'top-left':
+            h.style.top = '24px';
+            h.style.left = '24px';
+            h.style.alignItems = 'flex-start';
+            break;
+          case 'top-right':
+            h.style.top = '24px';
+            h.style.right = '24px';
+            h.style.alignItems = 'flex-end';
+            break;
+          case 'bottom-left':
+            h.style.bottom = '24px';
+            h.style.left = '24px';
+            h.style.alignItems = 'flex-start';
+            break;
+          case 'bottom-right':
+          default:
+            h.style.bottom = '24px';
+            h.style.right = '24px';
+            h.style.alignItems = 'flex-end';
+            break;
+        }
+      };
+
+      // Load initial
+      chrome.storage.local.get('widgetPosition').then((res) => {
+        if (typeof res.widgetPosition === 'string') {
+          updatePosition(res.widgetPosition);
+        } else {
+          updatePosition('bottom-right');
+        }
+      });
+
+      // Listen
+      const listener = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
+        if (areaName === 'local' && changes.widgetPosition && typeof changes.widgetPosition.newValue === 'string') {
+          updatePosition(changes.widgetPosition.newValue);
+        }
+      };
+      chrome.storage.onChanged.addListener(listener);
+      return () => chrome.storage.onChanged.removeListener(listener);
+    }, []);
 
     const isN8nWorkflowPage = () => {
       const href = window.location.href || '';
