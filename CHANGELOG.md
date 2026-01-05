@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.14.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.13.0...flowlint-chrome-v0.14.0) (2026-01-05)
+
+
+### Features
+
+* **widget:** add rules warning indicator with tooltip ([bdcf22b](https://github.com/Replikanti/flowlint-chrome/commit/bdcf22bf037e88a62cdbadc7390d93001911363a))
+
+
+### Bug Fixes
+
+* **ci:** remove conflicting --auto flag from gh pr merge ([1ec49ae](https://github.com/Replikanti/flowlint-chrome/commit/1ec49aeabbd928d6de3baa5edc1b47bd4d331942))
+* **onboarding:** use correct icons for widget controls ([dd87354](https://github.com/Replikanti/flowlint-chrome/commit/dd873543c7bbbbd6f932d30958171385ec83c035))
+* **rules-warning:** remove scroll from tooltip ([5c173e6](https://github.com/Replikanti/flowlint-chrome/commit/5c173e614169aeec471e4ac7347c0db43f0cd534))
+
 ## [0.13.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.12.2...flowlint-chrome-v0.13.0) (2026-01-05)
 
 
