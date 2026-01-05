@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import type { Finding } from '@replikanti/flowlint-core';
 import { FilterBar } from './FilterBar';
@@ -26,16 +26,12 @@ export const ExpandedView = ({
   onClose,
   onToggleFilter
 }: ExpandedViewProps) => {
-  // Global Escape key handler
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  // Auto-focus dialog on mount for keyboard events to work
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    globalThis.addEventListener('keydown', handleKeyDown);
-    return () => globalThis.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+    dialogRef.current?.focus();
+  }, []);
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (e.target === e.currentTarget) {
@@ -43,10 +39,21 @@ export const ExpandedView = ({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      onClose();
+    }
+  };
+
   return (
     <dialog
+      ref={dialogRef}
       open
-      className="fixed inset-0 z-[2147483647] flex items-center justify-center p-8 bg-transparent w-full h-full max-w-none m-0"
+      tabIndex={-1}
+      onKeyDown={handleKeyDown}
+      className="fixed inset-0 z-[2147483647] flex items-center justify-center p-8 bg-transparent w-full h-full max-w-none m-0 outline-none"
       data-testid="expanded-view-dialog"
       aria-labelledby="expanded-view-title"
     >
@@ -55,9 +62,9 @@ export const ExpandedView = ({
         type="button"
         className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 cursor-default border-none p-0"
         onClick={handleBackdropClick}
-        onKeyDown={(e) => e.key === 'Escape' && onClose()}
         aria-label="Close by clicking backdrop"
         data-testid="expanded-view-backdrop"
+        tabIndex={-1}
       />
       <div
         className="relative w-full h-full max-w-6xl max-h-[800px] bg-app dark:bg-app rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
@@ -86,10 +93,18 @@ export const ExpandedView = ({
            </div>
         </header>
 
-        <div className="flex-1 overflow-hidden flex flex-col relative p-3 gap-3">
-          <FilterBar counts={counts} filters={filters} onToggle={onToggleFilter} />
-          <FindingsList findings={findings} isFiltered={Object.values(filters).some(v => !v)} />
-          {allFindings.length > 0 && <ExportPanel results={allFindings} workflowName="n8n-workflow" />}
+        <div className="flex-1 overflow-hidden flex flex-col relative">
+          <div className="p-3 pb-0">
+            <FilterBar counts={counts} filters={filters} onToggle={onToggleFilter} />
+          </div>
+          <div className="flex-1 overflow-hidden flex flex-col p-3 pt-3">
+            <FindingsList findings={findings} isFiltered={Object.values(filters).some(v => !v)} />
+          </div>
+          {allFindings.length > 0 && (
+            <div className="flex-shrink-0">
+              <ExportPanel results={allFindings} workflowName="n8n-workflow" />
+            </div>
+          )}
         </div>
       </div>
     </dialog>

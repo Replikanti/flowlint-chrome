@@ -102,7 +102,8 @@ describe('ExpandedView', () => {
       />
     );
 
-    fireEvent.keyDown(window, { key: 'Escape' });
+    const dialog = screen.getByTestId('expanded-view-dialog');
+    fireEvent.keyDown(dialog, { key: 'Escape' });
     expect(mockOnClose).toHaveBeenCalled();
   });
 });
