@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.14.0...flowlint-chrome-v0.15.0) (2026-01-05)
+
+
+### Features
+
+* **expanded-view:** improve keyboard navigation and export visibility ([c53bd06](https://github.com/Replikanti/flowlint-chrome/commit/c53bd06d8a93b62d4b38d5d1408eb3b041f06516))
+
 ## [0.14.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.13.0...flowlint-chrome-v0.14.0) (2026-01-05)
 
 
