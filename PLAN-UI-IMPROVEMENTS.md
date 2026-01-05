@@ -258,20 +258,96 @@ const visibleFindings = sortedFindings.filter(
 
 ### Phase 3: Polish & Refinements
 
-#### 3.1 Additional Settings (Future)
+#### 3.1 Refactoring Widget.tsx
+
+**Current State:**
+- `Widget.tsx` is a large file (~300 lines) containing multiple concerns
+- `FindingCard` is defined inline within Widget.tsx
+- Expanded view logic mixed with main widget logic
+
+**Changes:**
+Extract into separate components for better maintainability:
+
+```
+src/components/
+├── Widget.tsx              # Main widget container (slimmed down)
+├── WidgetButton.tsx        # NEW: Circular button when closed
+├── FindingCard.tsx         # NEW: Individual finding display
+├── FindingsList.tsx        # NEW: Grouped findings with headers
+├── ExpandedView.tsx        # NEW: Modal overlay for full-screen view
+├── FilterBar.tsx           # NEW: Severity filter chips
+├── SettingsDropdown.tsx    # NEW: Settings gear menu
+└── ExportPanel.tsx         # Existing (add collapsible state)
+```
+
+**Benefits:**
+- Easier testing (smaller units)
+- Better code organization
+- Reusable components
+- Clearer responsibility separation
+
+**Implementation:**
+- Extract during REFACTOR phase of TDD cycle
+- Ensure all tests still pass after extraction
+- No new functionality, just reorganization
+
+#### 3.2 Drag & Drop Positioning (Future Enhancement)
+
+**After preset positions are implemented, consider adding free drag & drop:**
+
+1. Make button draggable using `onMouseDown`/`onTouchStart` handlers
+2. Track mouse/touch position during drag
+3. Constrain to viewport boundaries (with padding)
+4. Snap to nearest corner on release (optional)
+5. Store last position as `{ x: number, y: number }` in `chrome.storage.local`
+
+**Implementation Sketch:**
+```typescript
+// useDraggable.ts hook
+const useDraggable = (initialPosition: Position) => {
+  const [position, setPosition] = useState(initialPosition);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMouseDown = (e: MouseEvent) => {
+    setIsDragging(true);
+    // Store offset from click point to element corner
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    // Update position, constrain to viewport
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    // Optional: snap to nearest corner
+    // Save to chrome.storage.local
+  };
+
+  return { position, isDragging, handlers: { ... } };
+};
+```
+
+**Considerations:**
+- Touch support for mobile/tablet
+- Prevent drag when clicking interactive elements inside widget
+- Visual feedback during drag (cursor, opacity)
+- Accessibility: keyboard-based positioning as alternative
+
+#### 3.3 Additional Settings (Future)
 
 - **Auto-analyze on paste**: Toggle automatic analysis when clipboard changes
 - **Theme override**: Force light/dark regardless of system preference
 - **Notification sound**: Play sound when issues found
 - **Badge count**: Show issue count on extension icon
 
-#### 3.2 Keyboard Shortcuts
+#### 3.5 Keyboard Shortcuts
 
 - `Escape`: Close expanded view / close widget
 - `Ctrl/Cmd + E`: Toggle expand
 - `Ctrl/Cmd + F`: Focus filter
 
-#### 3.3 Accessibility Improvements
+#### 3.6 Accessibility Improvements
 
 - ARIA labels for all interactive elements
 - Focus management when opening/closing panels
@@ -438,6 +514,16 @@ describe('Widget - Expanded View', () => {
 #### 2.1 Movable Button (Preset Positions)
 
 ```typescript
+// SettingsDropdown.test.tsx - Add position tests
+
+describe('SettingsDropdown - Position', () => {
+  it('should show position radio buttons');
+  it('should highlight current position');
+  it('should call onPositionChange when radio selected');
+});
+```
+
+```typescript
 // Widget.test.tsx - Add tests for position
 
 describe('Widget - Position', () => {
@@ -458,6 +544,61 @@ describe('Widget - Position', () => {
     it('should highlight current position');
     it('should change position on radio button select');
   });
+});
+```
+
+#### 3.1 Refactored Components
+
+```typescript
+// FindingCard.test.tsx - Write BEFORE extraction
+
+describe('FindingCard', () => {
+  const mockFinding = {
+    rule: 'R1',
+    severity: 'must',
+    message: 'Rate limit handling missing',
+    nodeId: 'node-1',
+    documentationUrl: 'https://docs.flowlint.dev/rules/r1',
+  };
+
+  it('should render severity badge with correct color');
+  it('should render rule ID');
+  it('should render message');
+  it('should render documentation link when URL provided');
+  it('should not render documentation link when URL missing');
+  it('should render raw_details when provided');
+  it('should apply correct border color based on severity');
+});
+```
+
+```typescript
+// FindingsList.test.tsx - Write BEFORE extraction
+
+describe('FindingsList', () => {
+  const mockFindings = [
+    { severity: 'must', rule: 'R1', message: 'Error 1' },
+    { severity: 'must', rule: 'R2', message: 'Error 2' },
+    { severity: 'should', rule: 'R3', message: 'Warning 1' },
+  ];
+
+  it('should group findings by severity');
+  it('should render severity headers with counts');
+  it('should render FindingCard for each finding');
+  it('should hide empty severity groups');
+  it('should sort severities: must → should → nit');
+});
+```
+
+```typescript
+// WidgetButton.test.tsx - Write BEFORE extraction
+
+describe('WidgetButton', () => {
+  it('should render circular button with FlowLint icon');
+  it('should call onClick when clicked');
+  it('should apply muted class when disabled');
+  it('should show tooltip on hover');
+  it('should show "Workflow detected" banner when clipboard has workflow');
+  it('should animate banner with bounce effect');
 });
 ```
 
@@ -615,20 +756,32 @@ Consider extracting new components:
 
 | File | Phase | Changes |
 |------|-------|---------|
-| `src/components/Widget.tsx` | 1-2 | Expand view, settings button, filters, position, muted state |
+| `src/components/Widget.tsx` | 1-3 | Main container, slimmed down after refactoring |
+| `src/components/WidgetButton.tsx` | 3.1 | **NEW**: Circular button when closed |
+| `src/components/FindingCard.tsx` | 3.1 | **NEW**: Individual finding display |
+| `src/components/FindingsList.tsx` | 3.1 | **NEW**: Grouped findings with severity headers |
+| `src/components/ExpandedView.tsx` | 1.2, 3.1 | **NEW**: Modal overlay for full-screen view |
 | `src/components/ExportPanel.tsx` | 1.1 | Collapsible toggle state |
 | `src/components/SettingsDropdown.tsx` | 1.3 | **NEW**: Settings gear menu with toggles |
 | `src/components/FilterBar.tsx` | 2.2 | **NEW**: Severity filter chips |
+| `src/hooks/useDraggable.ts` | 3.2 | **NEW** (future): Drag & drop positioning hook |
 | `src/content/overlay.tsx` | 1.3, 2.1 | Position classes, initial settings load, storage listener |
 | `src/widget.css` | 1-2 | Transitions, position classes, expanded modal, muted styles |
 | `src/background/index.ts` | - | Optional: extension badge updates |
 
-**New Component Dependencies:**
+**Component Hierarchy (after refactoring):**
 ```
 Widget.tsx
+├── WidgetButton.tsx (circular button when closed)
 ├── SettingsDropdown.tsx (gear menu)
 ├── FilterBar.tsx (severity toggles)
-└── ExportPanel.tsx (collapsible export)
+├── FindingsList.tsx
+│   └── FindingCard.tsx (repeated)
+├── ExportPanel.tsx (collapsible export)
+└── ExpandedView.tsx (modal overlay)
+    ├── FilterBar.tsx
+    ├── FindingsList.tsx
+    └── ExportPanel.tsx
 ```
 
 ---

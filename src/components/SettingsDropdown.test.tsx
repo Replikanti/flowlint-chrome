@@ -76,6 +76,16 @@ describe('SettingsDropdown', () => {
     expect(mockChrome.storage.local.set).toHaveBeenCalledWith({ flowlintEnabled: true });
   });
 
+  it('toggles auto-analyze state', async () => {
+    render(<SettingsDropdown />);
+    fireEvent.click(screen.getByRole('button', { name: /settings/i }));
+    await waitFor(() => screen.getByText('Auto-analyze paste'));
+
+    const checkbox = screen.getByRole('checkbox', { name: /auto-analyze clipboard/i });
+    fireEvent.click(checkbox);
+    expect(mockChrome.storage.local.set).toHaveBeenCalledWith({ autoAnalyze: false });
+  });
+
   it('changes widget position', async () => {
     render(<SettingsDropdown />);
     fireEvent.click(screen.getByRole('button', { name: /settings/i }));

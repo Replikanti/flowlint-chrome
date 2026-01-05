@@ -9,17 +9,25 @@ interface SettingsDropdownProps {
 export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [enabled, setEnabled] = useState(true);
+  const [autoAnalyze, setAutoAnalyze] = useState(true);
   const [position, setPosition] = useState('bottom-right');
+  const [theme, setTheme] = useState('system');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Load initial state
   useEffect(() => {
-    chrome.storage.local.get(['flowlintEnabled', 'widgetPosition']).then((result) => {
+    chrome.storage.local.get(['flowlintEnabled', 'autoAnalyze', 'widgetPosition', 'theme']).then((result) => {
       if (typeof result.flowlintEnabled === 'boolean') {
         setEnabled(result.flowlintEnabled);
       }
+      if (typeof result.autoAnalyze === 'boolean') {
+        setAutoAnalyze(result.autoAnalyze);
+      }
       if (typeof result.widgetPosition === 'string') {
         setPosition(result.widgetPosition);
+      }
+      if (typeof result.theme === 'string') {
+        setTheme(result.theme);
       }
     });
   }, []);
@@ -29,16 +37,13 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
     if (!isOpen) return;
 
     const handleClickOutside = (event: Event) => {
-      // In Shadow DOM, we need composedPath to see the real target sequence
       const path = event.composedPath();
       if (dropdownRef.current && !path.includes(dropdownRef.current)) {
         setIsOpen(false);
       }
     };
 
-    // Always listen on window to catch clicks outside the Shadow DOM host
     window.addEventListener('mousedown', handleClickOutside);
-    
     return () => window.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
@@ -48,9 +53,20 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
     chrome.storage.local.set({ flowlintEnabled: newState });
   };
 
+  const toggleAutoAnalyze = () => {
+    const newState = !autoAnalyze;
+    setAutoAnalyze(newState);
+    chrome.storage.local.set({ autoAnalyze: newState });
+  };
+
   const changePosition = (pos: string) => {
     setPosition(pos);
     chrome.storage.local.set({ widgetPosition: pos });
+  };
+
+  const changeTheme = (t: string) => {
+    setTheme(t);
+    chrome.storage.local.set({ theme: t });
   };
 
   const positionClasses = direction === 'up' 
@@ -95,7 +111,43 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
               </div>
             </button>
 
-            <div className="px-2 pt-2 pb-1">
+            <button
+              role="checkbox"
+              aria-checked={autoAnalyze}
+              aria-label="Auto-analyze clipboard"
+              onClick={toggleAutoAnalyze}
+              className="w-full flex items-center justify-between px-2 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded cursor-pointer transition-colors"
+            >
+              <span>Auto-analyze paste</span>
+              <div className={cn(
+                "w-4 h-4 border rounded flex items-center justify-center transition-all duration-200",
+                autoAnalyze ? "bg-brand-600 border-brand-600 text-white" : "border-zinc-300 dark:border-zinc-600 bg-transparent"
+              )}>
+                <Check className={cn("w-3 h-3 transition-transform duration-200", autoAnalyze ? "scale-100" : "scale-0")} />
+              </div>
+            </button>
+
+            <div className="px-2 pt-2 pb-1 border-t border-zinc-100 dark:border-zinc-800">
+              <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-2">Theme</span>
+              <div className="grid grid-cols-3 gap-1">
+                {['system', 'light', 'dark'].map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => changeTheme(t)}
+                    className={cn(
+                      "py-1 border rounded text-[10px] capitalize transition-all",
+                      theme === t 
+                        ? "bg-brand-50 border-brand-200 text-brand-700 dark:bg-brand-900/20 dark:border-brand-800 dark:text-brand-400 font-bold" 
+                        : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+                    )}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="px-2 pt-2 pb-1 border-t border-zinc-100 dark:border-zinc-800">
               <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-2">Widget Position</span>
               <div className="grid grid-cols-2 gap-2">
                 {[
@@ -115,7 +167,6 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
                         : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-700"
                     )}
                   >
-                    {/* Visual indicator of quadrant */}
                     <div className={cn(
                       "w-3 h-3 border rounded-[1px] relative bg-white dark:bg-zinc-900",
                       position === pos.id ? "border-brand-300 dark:border-brand-700" : "border-zinc-300 dark:border-zinc-600"

@@ -38,9 +38,11 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   // Mount Point inside Shadow DOM
   const rootContainer = document.createElement('div');
 
-  // Detect and apply dark mode based on system preference
-  const updateDarkMode = () => {
-    const isDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
+  // Detect and apply dark mode based on system preference or settings
+  const applyTheme = (t: string) => {
+    const isSystemDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = t === 'dark' || (t === 'system' && isSystemDark);
+    
     if (isDark) {
       rootContainer.classList.add('dark');
     } else {
@@ -48,11 +50,24 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
     }
   };
 
-  // Initial dark mode detection
-  updateDarkMode();
+  // Initial theme detection
+  chrome.storage.local.get('theme').then((res) => {
+    applyTheme(typeof res.theme === 'string' ? res.theme : 'system');
+  });
 
   // Listen for system preference changes
-  globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateDarkMode);
+  globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    chrome.storage.local.get('theme').then((res) => {
+      applyTheme(typeof res.theme === 'string' ? res.theme : 'system');
+    });
+  });
+
+  // Listen for storage changes
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && changes.theme && typeof changes.theme.newValue === 'string') {
+      applyTheme(changes.theme.newValue);
+    }
+  });
 
   shadow.appendChild(rootContainer);
 
