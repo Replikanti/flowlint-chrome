@@ -41,11 +41,11 @@ export const RulesWarning = ({ enabledRules }: RulesWarningProps) => {
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
               Checked ({checkedRules.length})
             </div>
-            <div className="space-y-0.5 max-h-24 overflow-y-auto">
+            <div className="space-y-0.5">
               {checkedRules.map(rule => (
                 <div key={rule.id} className="text-[10px] text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5">
                   <span className="font-mono font-bold text-zinc-500 dark:text-zinc-500 w-6">{rule.id}</span>
-                  <span className="truncate">{formatRuleName(rule.name)}</span>
+                  <span>{formatRuleName(rule.name)}</span>
                 </div>
               ))}
             </div>
@@ -57,11 +57,11 @@ export const RulesWarning = ({ enabledRules }: RulesWarningProps) => {
               <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
               Skipped ({skippedRules.length})
             </div>
-            <div className="space-y-0.5 max-h-24 overflow-y-auto">
+            <div className="space-y-0.5">
               {skippedRules.map(rule => (
                 <div key={rule.id} className="text-[10px] text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5">
                   <span className="font-mono font-bold text-zinc-500 dark:text-zinc-500 w-6">{rule.id}</span>
-                  <span className="truncate">{formatRuleName(rule.name)}</span>
+                  <span>{formatRuleName(rule.name)}</span>
                 </div>
               ))}
             </div>
