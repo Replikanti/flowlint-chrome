@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ChevronRight, ChevronLeft, Keyboard, Settings, Maximize2, MousePointer } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Keyboard, Settings, Minimize2, Maximize, MousePointer } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 interface OnboardingStep {
@@ -27,7 +27,7 @@ const getSteps = (): OnboardingStep[] => [
       <div className="mt-4 space-y-3 text-left">
         <div className="flex items-center gap-3 p-2 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
           <div className="w-8 h-8 bg-zinc-200 dark:bg-zinc-700 rounded flex items-center justify-center">
-            <Maximize2 className="w-4 h-4" />
+            <Minimize2 className="w-4 h-4" />
           </div>
           <div>
             <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Minimize / Maximize</div>
@@ -36,7 +36,7 @@ const getSteps = (): OnboardingStep[] => [
         </div>
         <div className="flex items-center gap-3 p-2 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
           <div className="w-8 h-8 bg-zinc-200 dark:bg-zinc-700 rounded flex items-center justify-center">
-            <Maximize2 className="w-4 h-4" />
+            <Maximize className="w-4 h-4" />
           </div>
           <div>
             <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Expand View</div>
