@@ -9,7 +9,9 @@ import { FindingsList } from './FindingsList';
 import { ExpandedView } from './ExpandedView';
 import { WidgetButton } from './WidgetButton';
 import { ExportPanel } from './ExportPanel';
+import { OnboardingGuide } from './OnboardingGuide';
 import { cn } from '../utils/cn';
+import { shouldShowOnboarding, getCurrentVersion } from '../utils/onboarding';
 
 export const Widget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +21,7 @@ export const Widget = () => {
   const [autoAnalyze, setAutoAnalyze] = useState(true);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [enabledRules, setEnabledRules] = useState<Record<string, boolean>>({});
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const [filters, setFilters] = useState({ must: true, should: true, nit: true });
 
@@ -60,6 +63,17 @@ export const Widget = () => {
     };
     chrome.storage.onChanged.addListener(listener);
     return () => chrome.storage.onChanged.removeListener(listener);
+  }, []);
+
+  // Check if onboarding should be shown
+  useEffect(() => {
+    chrome.storage.local.get(['onboardingCompletedVersion']).then((result) => {
+      const storedVersion = result.onboardingCompletedVersion as string | undefined;
+      const currentVersion = getCurrentVersion();
+      if (shouldShowOnboarding(storedVersion, currentVersion)) {
+        setShowOnboarding(true);
+      }
+    });
   }, []);
 
   // Keyboard shortcuts
@@ -355,7 +369,7 @@ export const Widget = () => {
       </div>
 
       {isExpandedView && (
-        <ExpandedView 
+        <ExpandedView
           findings={filteredFindings}
           allFindings={results || []}
           filters={filters}
@@ -363,6 +377,10 @@ export const Widget = () => {
           onClose={() => setIsExpandedView(false)}
           onToggleFilter={toggleFilter}
         />
+      )}
+
+      {showOnboarding && (
+        <OnboardingGuide onComplete={() => setShowOnboarding(false)} />
       )}
     </>
   );
