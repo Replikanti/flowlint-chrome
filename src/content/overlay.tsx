@@ -64,6 +64,63 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   const OverlayApp = () => {
     const [isVisible, setIsVisible] = React.useState(false);
 
+    // Apply position logic
+    React.useEffect(() => {
+      const updatePosition = (pos: string) => {
+        const h = document.getElementById(MOUNT_POINT_ID);
+        if (!h) return;
+        
+        // Reset
+        h.style.top = '';
+        h.style.bottom = '';
+        h.style.left = '';
+        h.style.right = '';
+        h.style.alignItems = '';
+
+        switch (pos) {
+          case 'top-left':
+            h.style.top = '24px';
+            h.style.left = '24px';
+            h.style.alignItems = 'flex-start';
+            break;
+          case 'top-right':
+            h.style.top = '24px';
+            h.style.right = '24px';
+            h.style.alignItems = 'flex-end';
+            break;
+          case 'bottom-left':
+            h.style.bottom = '24px';
+            h.style.left = '24px';
+            h.style.alignItems = 'flex-start';
+            break;
+          case 'bottom-right':
+          default:
+            h.style.bottom = '24px';
+            h.style.right = '24px';
+            h.style.alignItems = 'flex-end';
+            break;
+        }
+      };
+
+      // Load initial
+      chrome.storage.local.get('widgetPosition').then((res) => {
+        if (typeof res.widgetPosition === 'string') {
+          updatePosition(res.widgetPosition);
+        } else {
+          updatePosition('bottom-right');
+        }
+      });
+
+      // Listen
+      const listener = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
+        if (areaName === 'local' && changes.widgetPosition && typeof changes.widgetPosition.newValue === 'string') {
+          updatePosition(changes.widgetPosition.newValue);
+        }
+      };
+      chrome.storage.onChanged.addListener(listener);
+      return () => chrome.storage.onChanged.removeListener(listener);
+    }, []);
+
     const isN8nWorkflowPage = () => {
       const href = window.location.href || '';
       return href.includes('/workflow') || href.includes('/workflows');

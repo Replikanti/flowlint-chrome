@@ -100,3 +100,16 @@
 
 .rounded-full { border-radius: 9999px !important; }
 .rounded-2xl { border-radius: 1rem !important; }
+
+/* Muted (disabled/MVP mode) */
+.muted {
+  opacity: 0.4 !important;
+  filter: grayscale(80%) !important;
+}
+
+/* Animations and Transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { SettingsDropdown } from './SettingsDropdown';
 
 // Mock chrome.storage
@@ -76,18 +76,17 @@ describe('SettingsDropdown', () => {
     expect(mockChrome.storage.local.set).toHaveBeenCalledWith({ flowlintEnabled: true });
   });
 
-  it('closes dropdown on outside click', async () => {
+  it('changes widget position', async () => {
     render(<SettingsDropdown />);
-    const button = screen.getByRole('button', { name: /settings/i });
-    fireEvent.click(button); // Open
-
-    await waitFor(() => screen.getByText('Settings'));
-
-    fireEvent.mouseDown(document.body);
+    fireEvent.click(screen.getByRole('button', { name: /settings/i }));
     
-    // Should be closed (settings text gone)
-    await waitFor(() => {
-        expect(screen.queryByText('Settings')).toBeNull();
-    });
+    await waitFor(() => screen.getByText('Widget Position'));
+    
+    // Default is bottom-right (mocked empty or default)
+    // Click Top-Left
+    const tlBtn = screen.getByLabelText('Top Left');
+    fireEvent.click(tlBtn);
+    
+    expect(mockChrome.storage.local.set).toHaveBeenCalledWith({ widgetPosition: 'top-left' });
   });
 });

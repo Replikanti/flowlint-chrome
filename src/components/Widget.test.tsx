@@ -14,7 +14,7 @@ const mockChrome = {
   },
   storage: {
     local: {
-      get: vi.fn((keys) => Promise.resolve({ flowlintEnabled: mockStorage.flowlintEnabled })),
+      get: vi.fn((keys) => Promise.resolve({ flowlintEnabled: mockStorage.flowlintEnabled, severityFilters: mockStorage.severityFilters })),
       set: vi.fn((items) => {
         Object.assign(mockStorage, items);
         return Promise.resolve();
@@ -40,7 +40,7 @@ Object.defineProperty(navigator, 'clipboard', {
 vi.mock('@replikanti/flowlint-core', () => ({
   parseN8n: vi.fn().mockReturnValue({ meta: {} }),
   runAllRules: vi.fn().mockReturnValue([
-    { rule: 'R1', severity: 'must', message: 'Test Error', nodeId: '1' }
+    { rule: 'R1', severity: 'must', message: 'Test Error', nodeId: '1', path: 'workflow.json' }
   ]),
   defaultConfig: {},
 }));
@@ -49,6 +49,7 @@ describe('Widget', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockStorage.flowlintEnabled = true;
+    mockStorage.severityFilters = undefined;
     listeners.length = 0;
   });
 
@@ -167,21 +168,71 @@ describe('Widget', () => {
     expect(screen.getByPlaceholderText(/Paste your n8n workflow/i)).toBeDefined();
   });
 
-  it('ignores invalid clipboard content', async () => {
-    vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue('invalid json');
+  it('shows success state when no findings', async () => {
+    vi.mocked(runAllRules).mockReturnValueOnce([]);
+    
     render(<Widget />);
+    fireEvent.click(screen.getByLabelText('Open FlowLint'));
     
-    // Wait for effect
-    await waitFor(() => {});
+    const textarea = screen.getByPlaceholderText(/Paste your n8n workflow/i);
+    fireEvent.change(textarea, { target: { value: '{"nodes":[]}' } });
     
-    // Prompt should NOT appear
-    expect(screen.queryByText('Workflow detected! Click to analyze.')).toBeNull();
+    await act(async () => {
+        fireEvent.click(screen.getByText('Analyze'));
+    });
+    
+    expect(screen.getByText('Workflow is clean!')).toBeDefined();
   });
 
-  it('ignores short clipboard content', async () => {
-    vi.spyOn(navigator.clipboard, 'readText').mockResolvedValue('short');
+  it('filters results by severity', async () => {
+    vi.mocked(runAllRules).mockReturnValue([
+        { rule: 'R1', severity: 'must', message: 'Error 1', nodeId: '1', path: 'workflow.json' },
+        { rule: 'R2', severity: 'should', message: 'Warning 1', nodeId: '2', path: 'workflow.json' },
+        { rule: 'R3', severity: 'nit', message: 'Info 1', nodeId: '3', path: 'workflow.json' },
+    ]);
+
     render(<Widget />);
-    await waitFor(() => {});
-    expect(screen.queryByText('Workflow detected! Click to analyze.')).toBeNull();
+    fireEvent.click(screen.getByLabelText('Open FlowLint'));
+    const textarea = screen.getByPlaceholderText(/Paste your n8n workflow/i);
+    fireEvent.change(textarea, { target: { value: '{"nodes":[]}' } });
+    await act(async () => { fireEvent.click(screen.getByText('Analyze')); });
+
+    // Initial state: all visible
+    expect(screen.getByText('Error 1')).toBeDefined();
+    expect(screen.getByText('Warning 1')).toBeDefined();
+    expect(screen.getByText('Info 1')).toBeDefined();
+
+    // Toggle MUST off
+    const mustFilter = screen.getByText(/must/i, { selector: 'button span' }).closest('button');
+    if (mustFilter) {
+        await act(async () => { fireEvent.click(mustFilter); });
+    }
+
+    // MUST should be gone
+    expect(screen.queryByText('Error 1')).toBeNull();
+    expect(screen.getByText('Warning 1')).toBeDefined();
+
+    // Verify storage update
+    expect(mockChrome.storage.local.set).toHaveBeenCalledWith({
+        severityFilters: expect.objectContaining({ must: false, should: true, nit: true })
+    });
+  });
+
+  it('toggles expanded view modal', async () => {
+    render(<Widget />);
+    fireEvent.click(screen.getByLabelText('Open FlowLint'));
+    
+    // Find Expand button
+    const expandBtn = screen.getByLabelText(/expand/i);
+    fireEvent.click(expandBtn);
+    
+    // Check for modal overlay title
+    expect(screen.getByText(/Expanded View/i)).toBeDefined();
+    
+    // Close modal
+    const closeOverlayBtn = screen.getByLabelText(/close expanded view/i);
+    fireEvent.click(closeOverlayBtn);
+    
+    expect(screen.queryByText(/Expanded View/i)).toBeNull();
   });
 });

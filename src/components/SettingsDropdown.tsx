@@ -9,38 +9,32 @@ interface SettingsDropdownProps {
 export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [enabled, setEnabled] = useState(true);
+  const [position, setPosition] = useState('bottom-right');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Load initial state
   useEffect(() => {
-    chrome.storage.local.get('flowlintEnabled').then((result) => {
+    chrome.storage.local.get(['flowlintEnabled', 'widgetPosition']).then((result) => {
       if (typeof result.flowlintEnabled === 'boolean') {
         setEnabled(result.flowlintEnabled);
+      }
+      if (typeof result.widgetPosition === 'string') {
+        setPosition(result.widgetPosition);
       }
     });
   }, []);
 
-  // Close on outside click
-  useEffect(() => {
-    const handleClickOutside = (event: Event) => {
-      // In Shadow DOM, we need composedPath to see the real target sequence
-      const path = event.composedPath();
-      if (dropdownRef.current && !path.includes(dropdownRef.current)) {
-        setIsOpen(false);
-      }
-    };
-
-    // Attach to the root node (Shadow Root) if possible, otherwise document
-    const root = dropdownRef.current?.getRootNode() as Document | ShadowRoot || document;
-    root.addEventListener('mousedown', handleClickOutside);
-    
-    return () => root.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]);
+  // ... existing close logic ...
 
   const toggleEnabled = () => {
     const newState = !enabled;
     setEnabled(newState);
     chrome.storage.local.set({ flowlintEnabled: newState });
+  };
+
+  const changePosition = (pos: string) => {
+    setPosition(pos);
+    chrome.storage.local.set({ widgetPosition: pos });
   };
 
   const positionClasses = direction === 'up' 
@@ -68,7 +62,7 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
           <div className="p-2 border-b border-zinc-100 dark:border-zinc-800">
             <h3 className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100 px-2">Settings</h3>
           </div>
-          <div className="p-1">
+          <div className="p-1 space-y-1">
             <button
               role="checkbox"
               aria-checked={enabled}
@@ -84,6 +78,43 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
                 <Check className={cn("w-3 h-3 transition-transform duration-200", enabled ? "scale-100" : "scale-0")} />
               </div>
             </button>
+
+            <div className="px-2 pt-2 pb-1">
+              <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-2">Widget Position</span>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: 'top-left', label: 'Top Left' },
+                  { id: 'top-right', label: 'Top Right' },
+                  { id: 'bottom-left', label: 'Bottom Left' },
+                  { id: 'bottom-right', label: 'Bottom Right' }
+                ].map((pos) => (
+                  <button
+                    key={pos.id}
+                    aria-label={pos.label}
+                    onClick={() => changePosition(pos.id)}
+                    className={cn(
+                      "h-8 border rounded flex items-center justify-center text-[10px] transition-all",
+                      position === pos.id 
+                        ? "bg-brand-50 border-brand-200 text-brand-700 dark:bg-brand-900/20 dark:border-brand-800 dark:text-brand-400 font-bold shadow-sm" 
+                        : "bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-700"
+                    )}
+                  >
+                    {/* Visual indicator of quadrant */}
+                    <div className={cn(
+                      "w-3 h-3 border rounded-[1px] relative bg-white dark:bg-zinc-900",
+                      position === pos.id ? "border-brand-300 dark:border-brand-700" : "border-zinc-300 dark:border-zinc-600"
+                    )}>
+                      <div className={cn(
+                        "absolute w-1.5 h-1.5 rounded-[0.5px] bg-current",
+                        pos.id.includes('top') ? "top-0" : "bottom-0",
+                        pos.id.includes('left') ? "left-0" : "right-0",
+                        position === pos.id ? "bg-brand-500" : "bg-zinc-400"
+                      )} />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}

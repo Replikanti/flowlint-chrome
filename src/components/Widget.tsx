@@ -2,41 +2,71 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { parseN8n, runAllRules, defaultConfig } from '@replikanti/flowlint-core';
 
 
-import { AlertCircle, CheckCircle, AlertTriangle, Info, ExternalLink, ClipboardPaste, X, Minimize2, Maximize2, Eraser, FileJson, ListChecks } from 'lucide-react';
+import { AlertCircle, CheckCircle, AlertTriangle, Info, ExternalLink, ClipboardPaste, X, Minimize2, Maximize2, Maximize, Minimize, Eraser, FileJson, ListChecks } from 'lucide-react';
 import type { Finding } from '@replikanti/flowlint-core';
 
 import { ExportPanel } from './ExportPanel';
 import { SettingsDropdown } from './SettingsDropdown';
+import { FilterBar } from './FilterBar';
 import { cn } from '../utils/cn';
 
 export const Widget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isExpandedView, setIsExpandedView] = useState(false);
   const [enabled, setEnabled] = useState(true);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [position, setPosition] = useState('bottom-right');
   
+  const [filters, setFilters] = useState({ must: true, should: true, nit: true });
+
   const [input, setInput] = useState('');
   const [results, setResults] = useState<Finding[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [clipboardWorkflow, setClipboardWorkflow] = useState<string | null>(null);
 
-  // Load enabled state
+  // Load enabled state and filters
   useEffect(() => {
-    chrome.storage.local.get('flowlintEnabled').then((result) => {
+    chrome.storage.local.get(['flowlintEnabled', 'severityFilters', 'widgetPosition']).then((result) => {
       if (typeof result.flowlintEnabled === 'boolean') {
         setEnabled(result.flowlintEnabled);
+      }
+      if (result.severityFilters && typeof result.severityFilters === 'object') {
+        setFilters(result.severityFilters as { must: boolean; should: boolean; nit: boolean });
+      }
+      if (typeof result.widgetPosition === 'string') {
+        setPosition(result.widgetPosition);
       }
       setSettingsLoaded(true);
     });
 
     const listener = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
-      if (areaName === 'local' && changes.flowlintEnabled) {
+      if (areaName !== 'local') return;
+      
+      if (changes.flowlintEnabled) {
         setEnabled(!!changes.flowlintEnabled.newValue);
+      }
+      if (changes.severityFilters && changes.severityFilters.newValue) {
+        setFilters(changes.severityFilters.newValue as { must: boolean; should: boolean; nit: boolean });
+      }
+      if (changes.widgetPosition && typeof changes.widgetPosition.newValue === 'string') {
+        setPosition(changes.widgetPosition.newValue);
       }
     };
     chrome.storage.onChanged.addListener(listener);
     return () => chrome.storage.onChanged.removeListener(listener);
   }, []);
+
+  const toggleFilter = (type: 'must' | 'should' | 'nit') => {
+    const newFilters = { ...filters, [type]: !filters[type] };
+    setFilters(newFilters);
+    chrome.storage.local.set({ severityFilters: newFilters });
+  };
+
+  const dropdownDirection = useMemo(() => {
+    if (!isMinimized) return 'down';
+    return position.startsWith('top') ? 'down' : 'up';
+  }, [isMinimized, position]);
 
   const isValidWorkflow = (text: string) => {
     if (!text || text.length < 10) return false;
@@ -106,14 +136,22 @@ export const Widget = () => {
 
   const findings = useMemo(() => results || [], [results]);
   const sortedFindings = useMemo(() => [...findings].sort((a, b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity)), [findings]);
+  
+  const counts = useMemo(() => ({
+    must: findings.filter(f => f.severity === 'must').length,
+    should: findings.filter(f => f.severity === 'should').length,
+    nit: findings.filter(f => f.severity === 'nit').length,
+  }), [findings]);
+
   const groupedFindings = useMemo(() => (
     ['must', 'should', 'nit']
+      .filter(severity => filters[severity as keyof typeof filters])
       .map(severity => ({
         severity,
         items: sortedFindings.filter(f => f.severity === severity)
       }))
       .filter(group => group.items.length > 0)
-  ), [sortedFindings]);
+  ), [sortedFindings, filters]);
   
   if (!isOpen) {
     return (
@@ -145,14 +183,14 @@ export const Widget = () => {
     ? { width: `280px`, height: `56px`, margin: 0 } 
     : { width: `450px`, height: `600px`, margin: 0 };
 
-  return (
-    <section 
-      style={containerStyle}
-      className={cn("flex flex-col transition-all duration-300 font-sans", isMinimized ? "overflow-visible" : "overflow-hidden")}
-      aria-label="FlowLint Auditor"
-    >
+  const renderContent = (isModal = false) => {
+    return (
       <div 
-        className={cn("w-full h-full bg-app dark:bg-app rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col", isMinimized ? "overflow-visible" : "overflow-hidden")}
+        className={cn(
+          "w-full h-full bg-app dark:bg-app rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col overflow-hidden",
+          isMinimized && !isModal ? "overflow-visible" : "overflow-hidden",
+          isModal && "rounded-xl border-none"
+        )}
         onKeyDown={stopPropagation}
         onPaste={stopPropagation}
         onCopy={stopPropagation}
@@ -165,21 +203,37 @@ export const Widget = () => {
               <div className="w-8 h-8 bg-brand-50 dark:bg-brand-900/20 rounded-lg flex items-center justify-center border border-brand-100 dark:border-brand-800">
                  <img src={chrome.runtime.getURL('icon-32.png')} className="w-5 h-5 rounded-sm" alt="Logo" />
               </div>
-              <h1 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">FlowLint</h1>
+              <h1 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">
+                {isModal ? 'FlowLint - Expanded View' : 'FlowLint'}
+              </h1>
            </div>
            <div className="flex items-center gap-1">
-              <SettingsDropdown direction={isMinimized ? 'up' : 'down'} />
+              <SettingsDropdown direction={(isMinimized && !isModal) ? 'up' : 'down'} />
               <div className="w-[1px] h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
-              <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
-                 {isMinimized ? <Maximize2 className="w-4 h-4"/> : <Minimize2 className="w-4 h-4"/>}
-              </button>
-              <button onClick={() => setIsOpen(false)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label="Close">
+              
+              {!isModal && (
+                <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
+                   {isMinimized ? <Maximize2 className="w-4 h-4"/> : <Minimize2 className="w-4 h-4"/>}
+                </button>
+              )}
+
+              {!isMinimized && (
+                <button onClick={() => setIsExpandedView(!isExpandedView)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isExpandedView ? "Contract" : "Expand"}>
+                   {isExpandedView && !isModal ? <Minimize className="w-4 h-4"/> : <Maximize className="w-4 h-4"/>}
+                </button>
+              )}
+
+              <button 
+                onClick={() => isModal ? setIsExpandedView(false) : setIsOpen(false)} 
+                className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors" 
+                aria-label={isModal ? "Close Expanded View" : "Close"}
+              >
                  <X className="w-4 h-4"/>
               </button>
            </div>
         </header>
 
-        {!isMinimized && (
+        {(!isMinimized || isModal) && (
            <div className="flex-1 overflow-hidden flex flex-col relative p-3 gap-3">
               
               {loading && (
@@ -191,8 +245,12 @@ export const Widget = () => {
                  </div>
               )}
 
-              {/* Input Card */}
-              <div className={`card flex flex-col overflow-hidden transition-all duration-300 \${results ? 'h-32' : 'flex-[1.5]'}`}>
+              {/* Input Card - hide or shrink in modal? Plan says "More space for findings list" */}
+              <div className={cn(
+                "card flex flex-col overflow-hidden transition-all duration-300",
+                results ? 'h-32' : 'flex-[1.5]',
+                isModal && results && "h-24" // Even smaller in modal to prioritize results
+              )}>
                  <div className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
                        <FileJson className="w-3 h-3" /> Workflow JSON
@@ -231,6 +289,10 @@ export const Widget = () => {
                        </button>
                     </div>
                     
+                    {findings.length > 0 && (
+                      <FilterBar counts={counts} filters={filters} onToggle={toggleFilter} />
+                    )}
+
                     <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-white dark:bg-zinc-900">
                        {findings.length === 0 ? (
                           <div className="flex flex-col items-center justify-center py-10 text-zinc-500">
@@ -240,10 +302,18 @@ export const Widget = () => {
                              <p className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Workflow is clean!</p>
                           </div>
                        ) : (
+                        groupedFindings.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center py-10 text-zinc-400">
+                            <p className="text-xs">No issues match selected filters.</p>
+                          </div>
+                        ) : (
                         groupedFindings.map(group => (
                           <div key={group.severity} className="space-y-2">
                             <div className="flex items-center gap-2 px-1">
-                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-sev-box \${getSeverityColor(group.severity)}`}>
+                               <span className={cn(
+                                 "text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-sev-box",
+                                 getSeverityColor(group.severity)
+                               )}>
                                  {group.severity}
                                </span>
                                <div className="h-[1px] flex-1 bg-zinc-100 dark:bg-zinc-800"></div>
@@ -252,7 +322,7 @@ export const Widget = () => {
                             {group.items.map((f, i) => <FindingCard key={`\${group.severity}-\${i}`} finding={f} />)}
                           </div>
                         ))
-                     )}
+                       ))}
                   </div>
                   
                   {results.length > 0 && <ExportPanel results={results} workflowName="n8n-workflow" />}
@@ -282,8 +352,35 @@ export const Widget = () => {
             </footer>
          </div>
       )}
-    </div>
-    </section>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <section 
+        style={containerStyle}
+        className={cn("flex flex-col transition-all duration-300 font-sans", isMinimized ? "overflow-visible" : "overflow-hidden")}
+        aria-label="FlowLint Auditor"
+      >
+        {renderContent(false)}
+      </section>
+
+      {/* Expanded Modal Overlay */}
+      {isExpandedView && (
+        <div 
+          className="fixed inset-0 z-[2147483647] flex items-center justify-center p-8 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setIsExpandedView(false)}
+        >
+          <div 
+            className="w-full h-full max-w-6xl max-h-[800px] animate-in zoom-in-95 duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            {renderContent(true)}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -293,11 +390,14 @@ const FindingCard = ({ finding }: { finding: Finding }) => {
    const Icon = getSeverityIcon(finding.severity);
  
    return (
-     <div className="border border-zinc-100 dark:border-zinc-800 rounded-xl p-3 bg-white dark:bg-zinc-900/50 shadow-sm flex gap-3 items-start border-l-4 \${getSeverityBorder(finding.severity)} transition-all hover:shadow-md">
-       <div className={`mt-0.5 \${colorClass}`}><Icon className="w-5 h-5" /></div>
+     <div className={cn(
+       "border border-zinc-100 dark:border-zinc-800 rounded-xl p-3 bg-white dark:bg-zinc-900/50 shadow-sm flex gap-3 items-start border-l-4 transition-all hover:shadow-md",
+       getSeverityBorder(finding.severity)
+     )}>
+       <div className={cn("mt-0.5", colorClass)}><Icon className="w-5 h-5" /></div>
        <div className="flex-1 min-w-0">
          <div className="flex items-center justify-between mb-1.5">
-             <span className={`text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-md bg-sev-box \${colorClass}`}>{finding.severity}</span>
+             <span className={cn("text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-md bg-sev-box", colorClass)}>{finding.severity}</span>
              <span className="text-[10px] text-zinc-400 font-mono font-bold tracking-tighter">{finding.rule}</span>
              {docUrl && (
                <a href={docUrl} target="_blank" rel="noreferrer" className="text-brand-600 hover:text-brand-700" aria-label="View documentation">
