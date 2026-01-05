@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.15.0...flowlint-chrome-v0.15.1) (2026-01-05)
+
+
+### Bug Fixes
+
+* **theme:** enable class-based dark mode for Tailwind v4 ([df5662d](https://github.com/Replikanti/flowlint-chrome/commit/df5662df8e87ed67c92b313eb17e81d2498ffddd))
+
 ## [0.15.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.14.0...flowlint-chrome-v0.15.0) (2026-01-05)
 
 
