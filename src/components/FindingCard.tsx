@@ -16,13 +16,13 @@ export const FindingCard = ({ finding }: FindingCardProps) => {
       "border border-zinc-100 dark:border-zinc-800 rounded-xl p-3 bg-white dark:bg-zinc-900/50 shadow-sm flex gap-3 items-start border-l-4 transition-all hover:shadow-md",
       getSeverityBorder(finding.severity)
     )}>
-      <div className={cn("mt-0.5", colorClass)}><Icon className="w-5 h-5" /></div>
+      <div className={cn("mt-0.5", colorClass)} aria-hidden="true"><Icon className="w-5 h-5" /></div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1.5">
             <span className={cn("text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-md bg-sev-box", colorClass)}>{finding.severity}</span>
             <span className="text-[10px] text-zinc-400 font-mono font-bold tracking-tighter">{finding.rule}</span>
             {docUrl && (
-              <a href={docUrl} target="_blank" rel="noreferrer" className="text-brand-600 hover:text-brand-700" aria-label="View documentation">
+              <a href={docUrl} target="_blank" rel="noreferrer" className="text-brand-600 hover:text-brand-700" aria-label={`View documentation for rule ${finding.rule}`}>
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}

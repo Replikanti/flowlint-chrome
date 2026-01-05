@@ -43,21 +43,30 @@ export const FindingsList = ({ findings, isFiltered = false }: FindingsListProps
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-white dark:bg-zinc-900">
+    <div 
+      className="flex-1 overflow-y-auto p-3 space-y-3 bg-white dark:bg-zinc-900"
+      role="list"
+      aria-label="Analysis Findings"
+    >
       {groupedFindings.map(group => (
-        <div key={group.severity} className="space-y-2">
+        <div key={group.severity} className="space-y-2" role="group" aria-labelledby={`header-${group.severity}`}>
           <div className="flex items-center gap-2 px-1">
-            <span className={cn(
-              "text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-sev-box",
-              getSeverityColor(group.severity)
-            )}>
+            <span 
+              id={`header-${group.severity}`}
+              className={cn(
+                "text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-sev-box",
+                getSeverityColor(group.severity)
+              )}
+            >
               {group.severity}
             </span>
             <div className="h-[1px] flex-1 bg-zinc-100 dark:bg-zinc-800"></div>
-            <span className="text-[10px] font-bold text-zinc-400">{group.items.length}</span>
+            <span className="text-[10px] font-bold text-zinc-400" aria-label={`${group.items.length} issues`}>{group.items.length}</span>
           </div>
           {group.items.map((f, i) => (
-            <FindingCard key={`${group.severity}-${i}`} finding={f} />
+            <div key={`${group.severity}-${i}`} role="listitem">
+              <FindingCard finding={f} />
+            </div>
           ))}
         </div>
       ))}

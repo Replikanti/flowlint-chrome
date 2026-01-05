@@ -31,6 +31,9 @@ export const ExpandedView = ({
       <div 
         className="w-full h-full max-w-6xl max-h-[800px] bg-app dark:bg-app rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="expanded-view-title"
       >
         {/* Header */}
         <header className="h-14 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 flex-shrink-0 z-10">
@@ -38,7 +41,7 @@ export const ExpandedView = ({
               <div className="w-8 h-8 bg-brand-50 dark:bg-brand-900/20 rounded-lg flex items-center justify-center border border-brand-100 dark:border-brand-800">
                  <img src={chrome.runtime.getURL('icon-32.png')} className="w-5 h-5 rounded-sm" alt="Logo" />
               </div>
-              <h1 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">
+              <h1 id="expanded-view-title" className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">
                 FlowLint - Expanded View
               </h1>
            </div>
