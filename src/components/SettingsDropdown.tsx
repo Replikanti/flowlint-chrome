@@ -1,10 +1,20 @@
-import { useState, useEffect, useRef } from 'react';
-import { Settings, Check } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Settings, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { RULES_METADATA } from '@replikanti/flowlint-core';
 import { cn } from '../utils/cn';
 
 interface SettingsDropdownProps {
   direction?: 'up' | 'down';
 }
+
+// Initialize all rules as enabled by default
+const getDefaultEnabledRules = (): Record<string, boolean> => {
+  const defaults: Record<string, boolean> = {};
+  RULES_METADATA.forEach(rule => {
+    defaults[rule.id] = true;
+  });
+  return defaults;
+};
 
 export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,11 +22,18 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
   const [autoAnalyze, setAutoAnalyze] = useState(true);
   const [position, setPosition] = useState('bottom-right');
   const [theme, setTheme] = useState('system');
+  const [enabledRules, setEnabledRules] = useState<Record<string, boolean>>(getDefaultEnabledRules);
+  const [rulesExpanded, setRulesExpanded] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const activeRuleCount = useMemo(() =>
+    Object.values(enabledRules).filter(Boolean).length,
+    [enabledRules]
+  );
 
   // Load initial state
   useEffect(() => {
-    chrome.storage.local.get(['flowlintEnabled', 'autoAnalyze', 'widgetPosition', 'theme']).then((result) => {
+    chrome.storage.local.get(['flowlintEnabled', 'autoAnalyze', 'widgetPosition', 'theme', 'enabledRules']).then((result) => {
       if (typeof result.flowlintEnabled === 'boolean') {
         setEnabled(result.flowlintEnabled);
       }
@@ -28,6 +45,10 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
       }
       if (typeof result.theme === 'string') {
         setTheme(result.theme);
+      }
+      if (result.enabledRules && typeof result.enabledRules === 'object') {
+        const savedRules = result.enabledRules as Record<string, boolean>;
+        setEnabledRules(prev => ({ ...prev, ...savedRules }));
       }
     });
   }, []);
@@ -67,6 +88,30 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
   const changeTheme = (t: string) => {
     setTheme(t);
     chrome.storage.local.set({ theme: t });
+  };
+
+  const toggleRule = (id: string) => {
+    const newRules = { ...enabledRules, [id]: !enabledRules[id] };
+    setEnabledRules(newRules);
+    chrome.storage.local.set({ enabledRules: newRules });
+  };
+
+  const setAllRules = (enabled: boolean) => {
+    const newRules: Record<string, boolean> = {};
+    RULES_METADATA.forEach(rule => {
+      newRules[rule.id] = enabled;
+    });
+    setEnabledRules(newRules);
+    chrome.storage.local.set({ enabledRules: newRules });
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'must': return 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20';
+      case 'should': return 'text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/20';
+      case 'nit': return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20';
+      default: return 'text-zinc-600 bg-zinc-50';
+    }
   };
 
   const positionClasses = direction === 'up' 
@@ -151,6 +196,74 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Rules Configuration */}
+            <div className="px-2 pt-2 pb-1 border-t border-zinc-100 dark:border-zinc-800">
+              <button
+                type="button"
+                onClick={() => setRulesExpanded(!rulesExpanded)}
+                className="w-full flex items-center justify-between text-[10px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                aria-label="Rules"
+              >
+                <span>Rules ({activeRuleCount}/{RULES_METADATA.length})</span>
+                {rulesExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </button>
+
+              {rulesExpanded && (
+                <div className="mt-2 space-y-1">
+                  {/* All / None buttons */}
+                  <div className="flex gap-1 mb-2">
+                    <button
+                      type="button"
+                      onClick={() => setAllRules(true)}
+                      className="flex-1 py-1 text-[9px] font-medium border rounded bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+                      aria-label="All"
+                    >
+                      All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAllRules(false)}
+                      className="flex-1 py-1 text-[9px] font-medium border rounded bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+                      aria-label="None"
+                    >
+                      None
+                    </button>
+                  </div>
+
+                  {/* Rule list */}
+                  <div className="max-h-40 overflow-y-auto space-y-0.5">
+                    {RULES_METADATA.map((rule) => (
+                      <label
+                        key={rule.id}
+                        className="flex items-center gap-2 px-1 py-1 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={enabledRules[rule.id] ?? true}
+                          onChange={() => toggleRule(rule.id)}
+                          className="sr-only"
+                          aria-label={rule.id}
+                        />
+                        <div className={cn(
+                          "w-3.5 h-3.5 border rounded flex items-center justify-center transition-all duration-200 flex-shrink-0",
+                          enabledRules[rule.id] ? "bg-brand-600 border-brand-600 text-white" : "border-zinc-300 dark:border-zinc-600 bg-transparent"
+                        )}>
+                          <Check className={cn("w-2.5 h-2.5 transition-transform duration-200", enabledRules[rule.id] ? "scale-100" : "scale-0")} />
+                        </div>
+                        <span className="text-[9px] font-mono font-bold text-zinc-500 dark:text-zinc-400 w-5">{rule.id}</span>
+                        <span className={cn("text-[8px] font-bold px-1 py-0.5 rounded", getSeverityColor(rule.severity))}>
+                          {rule.severity}
+                        </span>
+                        <span className="text-[9px] text-zinc-600 dark:text-zinc-400 truncate flex-1" title={rule.name}>
+                          {rule.name.replace(/_/g, ' ')}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="px-2 pt-2 pb-1 border-t border-zinc-100 dark:border-zinc-800">
