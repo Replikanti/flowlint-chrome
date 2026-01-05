@@ -24,7 +24,23 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
     });
   }, []);
 
-  // ... existing close logic ...
+  // Close on outside click
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: Event) => {
+      // In Shadow DOM, we need composedPath to see the real target sequence
+      const path = event.composedPath();
+      if (dropdownRef.current && !path.includes(dropdownRef.current)) {
+        setIsOpen(false);
+      }
+    };
+
+    // Always listen on window to catch clicks outside the Shadow DOM host
+    window.addEventListener('mousedown', handleClickOutside);
+    
+    return () => window.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
 
   const toggleEnabled = () => {
     const newState = !enabled;
