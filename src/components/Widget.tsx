@@ -91,6 +91,13 @@ export const Widget = () => {
     }
   }, [clipboardWorkflow, autoAnalyze, enabled]);
 
+  // Re-analyze when enabled rules change (if we have results)
+  useEffect(() => {
+    if (input && results && settingsLoaded) {
+      analyzeWorkflow(input);
+    }
+  }, [enabledRules]);
+
   const toggleFilter = (type: 'must' | 'should' | 'nit') => {
     const newFilters = { ...filters, [type]: !filters[type] };
     setFilters(newFilters);
