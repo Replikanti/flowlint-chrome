@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.13.0](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.12.2...flowlint-chrome-v0.13.0) (2026-01-05)
+
+
+### Features
+
+* **chrome:** ui improvements ([23a9f66](https://github.com/Replikanti/flowlint-chrome/commit/23a9f66d7e401ef364add8612e86a87a37fafdfe))
+* **onboarding:** add first-run guide with version-based trigger ([57adfc8](https://github.com/Replikanti/flowlint-chrome/commit/57adfc84ea2108dfa49abb5811b42a84337d7f5b))
+* **settings:** add rule configuration UI ([2d5439c](https://github.com/Replikanti/flowlint-chrome/commit/2d5439ca21b55c64673474e9644e645bc9d278db))
+* **widget:** auto re-analyze when rule settings change ([c75e325](https://github.com/Replikanti/flowlint-chrome/commit/c75e325e3614596e2eae837a73e4b58d2449f7a7))
+* **widget:** integrate rule configuration with analysis ([64bbb8c](https://github.com/Replikanti/flowlint-chrome/commit/64bbb8cf9db0cca9262000f441d575c26684437f))
+
+
+### Bug Fixes
+
+* **a11y:** resolve additional SonarQube issues ([87baf23](https://github.com/Replikanti/flowlint-chrome/commit/87baf235e28bd4a01be364ab87635394cf93f016))
+* **a11y:** resolve remaining SonarQube issues ([2459b47](https://github.com/Replikanti/flowlint-chrome/commit/2459b47bb52758fc179c0b84b2d27df72523c4e7))
+* **a11y:** resolve SonarQube accessibility and code quality issues ([72fcc6c](https://github.com/Replikanti/flowlint-chrome/commit/72fcc6ca26b11a7996a7dc784d3d4134ea0acbcd))
+* **tests:** fix failing FindingCard and Widget tests ([d9d68ac](https://github.com/Replikanti/flowlint-chrome/commit/d9d68ac04ab740d4e7bbd779ade346e16f0e1581))
+* **tests:** use document instead of globalThis for fireEvent.keyDown ([6670b0e](https://github.com/Replikanti/flowlint-chrome/commit/6670b0ea7b0735742a75f431c576f9cfdda14ae0))
+
 ## [0.12.2](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.12.1...flowlint-chrome-v0.12.2) (2026-01-05)
 
 
