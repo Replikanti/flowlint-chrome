@@ -148,11 +148,11 @@ export const Widget = () => {
   return (
     <section 
       style={containerStyle}
-      className="flex flex-col overflow-hidden transition-all duration-300 font-sans"
+      className={cn("flex flex-col transition-all duration-300 font-sans", isMinimized ? "overflow-visible" : "overflow-hidden")}
       aria-label="FlowLint Auditor"
     >
       <div 
-        className="w-full h-full bg-app dark:bg-app rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col overflow-hidden"
+        className={cn("w-full h-full bg-app dark:bg-app rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col", isMinimized ? "overflow-visible" : "overflow-hidden")}
         onKeyDown={stopPropagation}
         onPaste={stopPropagation}
         onCopy={stopPropagation}
@@ -168,7 +168,7 @@ export const Widget = () => {
               <h1 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">FlowLint</h1>
            </div>
            <div className="flex items-center gap-1">
-              <SettingsDropdown />
+              <SettingsDropdown direction={isMinimized ? 'up' : 'down'} />
               <div className="w-[1px] h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
               <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
                  {isMinimized ? <Maximize2 className="w-4 h-4"/> : <Minimize2 className="w-4 h-4"/>}

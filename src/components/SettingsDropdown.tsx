@@ -2,7 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { Settings, Check } from 'lucide-react';
 import { cn } from '../utils/cn';
 
-export const SettingsDropdown = () => {
+interface SettingsDropdownProps {
+  direction?: 'up' | 'down';
+}
+
+export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [enabled, setEnabled] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -31,13 +35,17 @@ export const SettingsDropdown = () => {
     root.addEventListener('mousedown', handleClickOutside);
     
     return () => root.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]); // Re-bind if needed, or just [] if ref stable. [] is fine.
+  }, [isOpen]);
 
   const toggleEnabled = () => {
     const newState = !enabled;
     setEnabled(newState);
     chrome.storage.local.set({ flowlintEnabled: newState });
   };
+
+  const positionClasses = direction === 'up' 
+    ? "bottom-full mb-1 origin-bottom-right" 
+    : "top-full mt-1 origin-top-right";
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -53,7 +61,10 @@ export const SettingsDropdown = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50 animate-in fade-in zoom-in-95 duration-100">
+        <div className={cn(
+          "absolute right-0 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50 animate-in fade-in zoom-in-95 duration-100",
+          positionClasses
+        )}>
           <div className="p-2 border-b border-zinc-100 dark:border-zinc-800">
             <h3 className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100 px-2">Settings</h3>
           </div>
