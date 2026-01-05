@@ -10,6 +10,7 @@ import { ExpandedView } from './ExpandedView';
 import { WidgetButton } from './WidgetButton';
 import { ExportPanel } from './ExportPanel';
 import { OnboardingGuide } from './OnboardingGuide';
+import { RulesWarning } from './RulesWarning';
 import { cn } from '../utils/cn';
 import { shouldShowOnboarding, getCurrentVersion } from '../utils/onboarding';
 
@@ -324,9 +325,12 @@ export const Widget = () => {
                        <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
                           <ListChecks className="w-3 h-3" /> Results
                        </div>
-                       <button onClick={() => setResults(null)} className="text-[10px] text-brand-600 font-bold hover:underline flex items-center gap-1">
-                          <Eraser className="w-3 h-3" /> Clear
-                       </button>
+                       <div className="flex items-center gap-2">
+                          <RulesWarning enabledRules={enabledRules} />
+                          <button onClick={() => setResults(null)} className="text-[10px] text-brand-600 font-bold hover:underline flex items-center gap-1">
+                             <Eraser className="w-3 h-3" /> Clear
+                          </button>
+                       </div>
                     </div>
                     <FilterBar counts={counts} filters={filters} onToggle={toggleFilter} />
                     <FindingsList findings={filteredFindings} isFiltered={Object.values(filters).some(v => !v)} />
