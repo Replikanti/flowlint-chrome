@@ -51,10 +51,8 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   };
 
   // Initial theme detection
-  void (async () => {
-    const res = await chrome.storage.local.get('theme');
-    applyTheme(typeof res.theme === 'string' ? res.theme : 'system');
-  })();
+  const initialTheme = await chrome.storage.local.get('theme');
+  applyTheme(typeof initialTheme.theme === 'string' ? initialTheme.theme : 'system');
 
   // Listen for system preference changes
   globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {

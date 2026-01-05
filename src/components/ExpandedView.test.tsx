@@ -47,8 +47,9 @@ describe('ExpandedView', () => {
   });
 
   it('calls onClose when close button clicked', () => {
+    mockOnClose.mockClear();
     render(
-      <ExpandedView 
+      <ExpandedView
         findings={mockFindings}
         allFindings={mockFindings}
         filters={mockFilters}
@@ -57,15 +58,17 @@ describe('ExpandedView', () => {
         onToggleFilter={mockOnToggleFilter}
       />
     );
-    
-    const closeBtn = screen.getByLabelText(/close expanded view/i);
+
+    // The header close button has exact aria-label "Close Expanded View"
+    const closeBtn = screen.getByRole('button', { name: 'Close Expanded View' });
     fireEvent.click(closeBtn);
     expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('calls onClose when backdrop clicked', () => {
+    mockOnClose.mockClear();
     render(
-      <ExpandedView 
+      <ExpandedView
         findings={mockFindings}
         allFindings={mockFindings}
         filters={mockFilters}
@@ -74,8 +77,8 @@ describe('ExpandedView', () => {
         onToggleFilter={mockOnToggleFilter}
       />
     );
-    
-    // Backdrop is the outer div
+
+    // Backdrop is the clickable overlay div
     const backdrop = screen.getByTestId('expanded-view-backdrop');
     fireEvent.click(backdrop);
     expect(mockOnClose).toHaveBeenCalled();

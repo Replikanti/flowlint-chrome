@@ -18,7 +18,6 @@ export const Widget = () => {
   const [enabled, setEnabled] = useState(true);
   const [autoAnalyze, setAutoAnalyze] = useState(true);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
-  const [position, setPosition] = useState('bottom-right');
   
   const [filters, setFilters] = useState({ must: true, should: true, nit: true });
 
@@ -29,7 +28,7 @@ export const Widget = () => {
 
   // Load settings
   useEffect(() => {
-    chrome.storage.local.get(['flowlintEnabled', 'autoAnalyze', 'severityFilters', 'widgetPosition', 'theme']).then((result) => {
+    chrome.storage.local.get(['flowlintEnabled', 'autoAnalyze', 'severityFilters']).then((result) => {
       if (typeof result.flowlintEnabled === 'boolean') {
         setEnabled(result.flowlintEnabled);
       }
@@ -39,9 +38,6 @@ export const Widget = () => {
       if (result.severityFilters && typeof result.severityFilters === 'object') {
         setFilters(result.severityFilters as { must: boolean; should: boolean; nit: boolean });
       }
-      if (typeof result.widgetPosition === 'string') {
-        setPosition(result.widgetPosition);
-      }
       setSettingsLoaded(true);
     });
 
@@ -50,9 +46,6 @@ export const Widget = () => {
       if (changes.flowlintEnabled) setEnabled(!!changes.flowlintEnabled.newValue);
       if (changes.autoAnalyze) setAutoAnalyze(!!changes.autoAnalyze.newValue);
       if (changes.severityFilters) setFilters(changes.severityFilters.newValue as { must: boolean; should: boolean; nit: boolean });
-      if (changes.widgetPosition && typeof changes.widgetPosition.newValue === 'string') {
-        setPosition(changes.widgetPosition.newValue);
-      }
     };
     chrome.storage.onChanged.addListener(listener);
     return () => chrome.storage.onChanged.removeListener(listener);
@@ -183,10 +176,21 @@ export const Widget = () => {
     : { width: `450px`, height: `600px`, margin: 0 };
 
   const renderInnerContent = (isModal = false) => {
+    const showContent = !isMinimized || isModal;
+    const isMinimizedNotModal = isMinimized && !isModal;
+    const dropdownDirection = isMinimizedNotModal ? 'up' : 'down';
+    const overflowClass = isMinimizedNotModal ? "overflow-visible" : "overflow-hidden";
+    const handleClose = () => isModal ? setIsExpandedView(false) : setIsOpen(false);
+    const MinMaxIcon = isMinimized ? Maximize2 : Minimize2;
+    const ExpandIcon = (isExpandedView && !isModal) ? Minimize : Maximize;
+    const inputHeightClass = results ? (isModal ? 'h-24' : 'h-32') : 'flex-[1.5]';
+    const showClipboardReady = clipboardWorkflow && !results;
+    const hasInput = input.length > 0;
+
     return (
       <div className={cn(
         "w-full h-full bg-app dark:bg-app rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col",
-        isMinimized && !isModal ? "overflow-visible" : "overflow-hidden",
+        overflowClass,
         isModal && "rounded-xl border-none"
       )}>
         {/* Header */}
@@ -200,24 +204,24 @@ export const Widget = () => {
               </h1>
            </div>
            <div className="flex items-center gap-1">
-              <SettingsDropdown direction={(isMinimized && !isModal) ? 'up' : 'down'} />
+              <SettingsDropdown direction={dropdownDirection} />
               <div className="w-[1px] h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
-              
+
               {!isModal && (
                 <button onClick={() => setIsMinimized(!isMinimized)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isMinimized ? "Maximize" : "Minimize"}>
-                   {isMinimized ? <Maximize2 className="w-4 h-4"/> : <Minimize2 className="w-4 h-4"/>}
+                   <MinMaxIcon className="w-4 h-4"/>
                 </button>
               )}
 
               {!isMinimized && (
                 <button onClick={() => setIsExpandedView(!isExpandedView)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-600 dark:text-zinc-400 transition-colors" aria-label={isExpandedView ? "Contract" : "Expand"}>
-                   {isExpandedView && !isModal ? <Minimize className="w-4 h-4"/> : <Maximize className="w-4 h-4"/>}
+                   <ExpandIcon className="w-4 h-4"/>
                 </button>
               )}
 
-              <button 
-                onClick={() => isModal ? setIsExpandedView(false) : setIsOpen(false)} 
-                className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors" 
+              <button
+                onClick={handleClose}
+                className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors"
                 aria-label="Close"
               >
                  <X className="w-4 h-4"/>
@@ -225,7 +229,7 @@ export const Widget = () => {
            </div>
         </header>
 
-        {(!isMinimized || isModal) && (
+        {showContent && (
            <div className="flex-1 overflow-hidden flex flex-col relative p-3 gap-3">
               {loading && (
                  <div className="absolute inset-0 bg-white/60 dark:bg-zinc-900/60 z-30 flex items-center justify-center backdrop-blur-[1px]">
@@ -237,21 +241,21 @@ export const Widget = () => {
               )}
 
               {/* Input Section */}
-              <div className={cn("card flex flex-col overflow-hidden transition-all duration-300", results ? 'h-32' : 'flex-[1.5]', isModal && results && "h-24")}>
+              <div className={cn("card flex flex-col overflow-hidden transition-all duration-300", inputHeightClass)}>
                  <div className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
                        <FileJson className="w-3 h-3" /> Workflow JSON
                     </div>
-                    {clipboardWorkflow && !results && <span className="text-[10px] text-brand-600 font-bold animate-pulse">Clipboard ready!</span>}
+                    {showClipboardReady && <span className="text-[10px] text-brand-600 font-bold animate-pulse">Clipboard ready!</span>}
                  </div>
                  <div className="flex-1 relative p-2">
-                    <textarea 
+                    <textarea
                        placeholder="Paste your n8n workflow JSON here..."
                        value={input}
                        onChange={e => setInput(e.target.value)}
                        className="w-full h-full bg-transparent border-none resize-none focus:outline-none text-[11px] font-mono text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400"
                     />
-                    {input.length > 0 && (
+                    {hasInput && (
                        <button onClick={() => analyzeWorkflow(input)} className="absolute bottom-2 right-2 bg-brand-600 hover:bg-brand-700 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold shadow-md transition-all hover:scale-105 active:scale-95">
                           {results ? 'Re-analyze' : 'Analyze'}
                        </button>
@@ -301,7 +305,8 @@ export const Widget = () => {
 
   return (
     <>
-      <section
+      <div
+        role="application"
         style={containerStyle}
         className={cn("flex flex-col transition-all duration-300 font-sans", isMinimized ? "overflow-visible" : "overflow-hidden")}
         aria-label="FlowLint Auditor"
@@ -309,7 +314,7 @@ export const Widget = () => {
         onKeyDown={e => e.stopPropagation()}
       >
         {renderInnerContent(false)}
-      </section>
+      </div>
 
       {isExpandedView && (
         <ExpandedView 

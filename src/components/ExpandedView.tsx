@@ -22,14 +22,8 @@ export const ExpandedView = ({
   onClose,
   onToggleFilter
 }: ExpandedViewProps) => {
-  const handleBackdropClick = (e: React.MouseEvent) => {
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
       onClose();
     }
   };
@@ -37,14 +31,22 @@ export const ExpandedView = ({
   return (
     <dialog
       open
-      className="fixed inset-0 z-[2147483647] flex items-center justify-center p-8 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 w-full h-full max-w-none m-0"
-      onClick={handleBackdropClick}
-      onKeyDown={handleKeyDown}
-      data-testid="expanded-view-backdrop"
+      className="fixed inset-0 z-[2147483647] flex items-center justify-center p-8 bg-transparent w-full h-full max-w-none m-0"
+      data-testid="expanded-view-dialog"
       aria-labelledby="expanded-view-title"
     >
+      {/* Backdrop overlay - interactive div for click-to-close */}
       <div
-        className="w-full h-full max-w-6xl max-h-[800px] bg-app dark:bg-app rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+        onClick={handleBackdropClick}
+        onKeyDown={(e) => e.key === 'Escape' && onClose()}
+        role="button"
+        tabIndex={0}
+        aria-label="Close by clicking backdrop"
+        data-testid="expanded-view-backdrop"
+      />
+      <div
+        className="relative w-full h-full max-w-6xl max-h-[800px] bg-app dark:bg-app rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
       >
         {/* Header */}
         <header className="h-14 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 flex-shrink-0 z-10">
