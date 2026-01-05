@@ -175,16 +175,21 @@ export const Widget = () => {
     ? { width: `280px`, height: `56px`, margin: 0 } 
     : { width: `450px`, height: `600px`, margin: 0 };
 
+  const getInputHeightClass = (hasResults: boolean, isModalView: boolean): string => {
+    if (!hasResults) return 'flex-[1.5]';
+    return isModalView ? 'h-24' : 'h-32';
+  };
+
   const renderInnerContent = (isModal = false) => {
     const showContent = !isMinimized || isModal;
     const isMinimizedNotModal = isMinimized && !isModal;
     const dropdownDirection = isMinimizedNotModal ? 'up' : 'down';
     const overflowClass = isMinimizedNotModal ? "overflow-visible" : "overflow-hidden";
-    const handleClose = () => isModal ? setIsExpandedView(false) : setIsOpen(false);
+    const handleClose = () => { isModal ? setIsExpandedView(false) : setIsOpen(false); };
     const MinMaxIcon = isMinimized ? Maximize2 : Minimize2;
     const ExpandIcon = (isExpandedView && !isModal) ? Minimize : Maximize;
-    const inputHeightClass = results ? (isModal ? 'h-24' : 'h-32') : 'flex-[1.5]';
-    const showClipboardReady = clipboardWorkflow && !results;
+    const inputHeightClass = getInputHeightClass(!!results, isModal);
+    const showClipboardReady = Boolean(clipboardWorkflow && !results);
     const hasInput = input.length > 0;
 
     return (
@@ -305,13 +310,11 @@ export const Widget = () => {
 
   return (
     <>
+      {/* Widget container - Shadow DOM provides event isolation from the host page */}
       <div
-        role="application"
         style={containerStyle}
         className={cn("flex flex-col transition-all duration-300 font-sans", isMinimized ? "overflow-visible" : "overflow-hidden")}
         aria-label="FlowLint Auditor"
-        onClick={e => e.stopPropagation()}
-        onKeyDown={e => e.stopPropagation()}
       >
         {renderInnerContent(false)}
       </div>

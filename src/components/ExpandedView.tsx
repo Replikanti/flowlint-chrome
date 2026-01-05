@@ -22,7 +22,7 @@ export const ExpandedView = ({
   onClose,
   onToggleFilter
 }: ExpandedViewProps) => {
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleBackdropClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
@@ -35,13 +35,12 @@ export const ExpandedView = ({
       data-testid="expanded-view-dialog"
       aria-labelledby="expanded-view-title"
     >
-      {/* Backdrop overlay - interactive div for click-to-close */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+      {/* Backdrop overlay - button for click-to-close */}
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 cursor-default border-none p-0"
         onClick={handleBackdropClick}
         onKeyDown={(e) => e.key === 'Escape' && onClose()}
-        role="button"
-        tabIndex={0}
         aria-label="Close by clicking backdrop"
         data-testid="expanded-view-backdrop"
       />
