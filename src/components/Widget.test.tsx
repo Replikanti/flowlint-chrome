@@ -175,8 +175,7 @@ describe('Widget', () => {
     });
     
     await waitFor(() => {
-        const cleanElements = screen.getAllByText(/Workflow is clean/i);
-        expect(cleanElements.length).toBeGreaterThan(0);
+        expect(screen.getByText(/Workflow is clean/i)).toBeDefined();
     });
   });
 
@@ -210,6 +209,8 @@ describe('Widget', () => {
     fireEvent.click(screen.getByLabelText('Open FlowLint'));
     await screen.findByRole('heading', { name: 'FlowLint' });
 
+    // Focus body to ensure keydown bubbles
+    document.body.focus();
     fireEvent.keyDown(window, { key: 'Escape' });
     
     await waitFor(() => {
