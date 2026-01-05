@@ -180,12 +180,14 @@ export const Widget = () => {
     return isModalView ? 'h-24' : 'h-32';
   };
 
-  const renderInnerContent = (isModal = false) => {
+  const closeWidget = () => setIsOpen(false);
+  const closeExpandedView = () => setIsExpandedView(false);
+
+  const renderInnerContent = (isModal = false, onClose = closeWidget) => {
     const showContent = !isMinimized || isModal;
     const isMinimizedNotModal = isMinimized && !isModal;
     const dropdownDirection = isMinimizedNotModal ? 'up' : 'down';
     const overflowClass = isMinimizedNotModal ? "overflow-visible" : "overflow-hidden";
-    const handleClose = () => { isModal ? setIsExpandedView(false) : setIsOpen(false); };
     const MinMaxIcon = isMinimized ? Maximize2 : Minimize2;
     const ExpandIcon = (isExpandedView && !isModal) ? Minimize : Maximize;
     const inputHeightClass = getInputHeightClass(!!results, isModal);
@@ -225,7 +227,7 @@ export const Widget = () => {
               )}
 
               <button
-                onClick={handleClose}
+                onClick={onClose}
                 className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 rounded text-zinc-600 dark:text-zinc-400 transition-colors"
                 aria-label="Close"
               >
