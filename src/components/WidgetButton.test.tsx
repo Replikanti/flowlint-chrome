@@ -30,7 +30,7 @@ describe('WidgetButton', () => {
   });
 
   it('applies muted class when disabled', () => {
-    const { container } = render(<WidgetButton onClick={mockOnClick} enabled={false} />);
+    render(<WidgetButton onClick={mockOnClick} enabled={false} />);
     const btn = screen.getByLabelText('Open FlowLint');
     expect(btn.className).toContain('muted');
   });

@@ -54,9 +54,8 @@ export const ExportPanel = ({ results, workflowName = 'workflow' }: ExportPanelP
   }
 
   return (
-    <div 
+    <section
       id="export-options"
-      role="region"
       aria-label="Export Options"
       className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2.5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)]"
     >
@@ -208,6 +207,6 @@ export const ExportPanel = ({ results, workflowName = 'workflow' }: ExportPanelP
           <span>JUnit</span>
         </button>
       </div>
-    </div>
+    </section>
   );
 };

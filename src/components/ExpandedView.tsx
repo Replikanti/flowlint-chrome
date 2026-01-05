@@ -14,26 +14,37 @@ interface ExpandedViewProps {
   onToggleFilter: (type: 'must' | 'should' | 'nit') => void;
 }
 
-export const ExpandedView = ({ 
-  findings, 
-  allFindings, 
-  filters, 
-  counts, 
-  onClose, 
-  onToggleFilter 
+export const ExpandedView = ({
+  findings,
+  allFindings,
+  filters,
+  counts,
+  onClose,
+  onToggleFilter
 }: ExpandedViewProps) => {
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
   return (
-    <div 
-      className="fixed inset-0 z-[2147483647] flex items-center justify-center p-8 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
-      onClick={onClose}
+    <dialog
+      open
+      className="fixed inset-0 z-[2147483647] flex items-center justify-center p-8 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 w-full h-full max-w-none m-0"
+      onClick={handleBackdropClick}
+      onKeyDown={handleKeyDown}
       data-testid="expanded-view-backdrop"
+      aria-labelledby="expanded-view-title"
     >
-      <div 
+      <div
         className="w-full h-full max-w-6xl max-h-[800px] bg-app dark:bg-app rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
-        onClick={e => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="expanded-view-title"
       >
         {/* Header */}
         <header className="h-14 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 flex-shrink-0 z-10">
@@ -64,6 +75,6 @@ export const ExpandedView = ({
           {allFindings.length > 0 && <ExportPanel results={allFindings} workflowName="n8n-workflow" />}
         </div>
       </div>
-    </div>
+    </dialog>
   );
 };

@@ -72,8 +72,8 @@ export const Widget = () => {
         }
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    globalThis.addEventListener('keydown', handleKeyDown);
+    return () => globalThis.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isExpandedView, isMinimized]);
 
   // Auto-analyze when clipboard content changes
@@ -92,11 +92,6 @@ export const Widget = () => {
     setFilters(newFilters);
     chrome.storage.local.set({ severityFilters: newFilters });
   };
-
-  const dropdownDirection = useMemo(() => {
-    if (!isMinimized) return 'down';
-    return position.startsWith('top') ? 'down' : 'up';
-  }, [isMinimized, position]);
 
   const isValidWorkflow = (text: string) => {
     if (!text || text.length < 10) return false;
@@ -118,17 +113,19 @@ export const Widget = () => {
       } else {
         setClipboardWorkflow(null);
       }
-    } catch (e) { /* ignored */ }
+    } catch {
+      // Clipboard access may fail due to permissions - this is expected behavior
+    }
   }, [enabled, settingsLoaded]);
 
   useEffect(() => {
     if (!settingsLoaded) return;
     const check = () => checkClipboard();
-    window.addEventListener('focus', check);
+    globalThis.addEventListener('focus', check);
     check();
     const interval = setInterval(check, 2000);
     return () => {
-      window.removeEventListener('focus', check);
+      globalThis.removeEventListener('focus', check);
       clearInterval(interval);
     };
   }, [checkClipboard, settingsLoaded]);
@@ -304,11 +301,12 @@ export const Widget = () => {
 
   return (
     <>
-      <section 
+      <section
         style={containerStyle}
         className={cn("flex flex-col transition-all duration-300 font-sans", isMinimized ? "overflow-visible" : "overflow-hidden")}
         aria-label="FlowLint Auditor"
         onClick={e => e.stopPropagation()}
+        onKeyDown={e => e.stopPropagation()}
       >
         {renderInnerContent(false)}
       </section>

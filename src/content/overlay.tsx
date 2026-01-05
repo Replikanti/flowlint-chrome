@@ -51,15 +51,15 @@ if (!document.getElementById(MOUNT_POINT_ID)) {
   };
 
   // Initial theme detection
-  chrome.storage.local.get('theme').then((res) => {
+  void (async () => {
+    const res = await chrome.storage.local.get('theme');
     applyTheme(typeof res.theme === 'string' ? res.theme : 'system');
-  });
+  })();
 
   // Listen for system preference changes
-  globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    chrome.storage.local.get('theme').then((res) => {
-      applyTheme(typeof res.theme === 'string' ? res.theme : 'system');
-    });
+  globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
+    const res = await chrome.storage.local.get('theme');
+    applyTheme(typeof res.theme === 'string' ? res.theme : 'system');
   });
 
   // Listen for storage changes

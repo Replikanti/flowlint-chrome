@@ -215,7 +215,7 @@ describe('Widget', () => {
 
     // Ensure focus is within the document
     document.body.focus();
-    fireEvent.keyDown(window, { key: 'Escape' });
+    fireEvent.keyDown(globalThis, { key: 'Escape' });
     
     await waitFor(() => {
         expect(screen.queryByRole('heading', { name: 'FlowLint' })).toBeNull();
@@ -231,11 +231,11 @@ describe('Widget', () => {
     await screen.findByRole('heading', { name: 'FlowLint' });
     
     // Toggle on
-    fireEvent.keyDown(window, { key: 'e', ctrlKey: true });
+    fireEvent.keyDown(globalThis, { key: 'e', ctrlKey: true });
     expect(await screen.findByText(/Expanded View/i)).toBeDefined();
 
     // Toggle off
-    fireEvent.keyDown(window, { key: 'e', ctrlKey: true });
+    fireEvent.keyDown(globalThis, { key: 'e', ctrlKey: true });
     await waitFor(() => {
         expect(screen.queryByText(/Expanded View/i)).toBeNull();
     });

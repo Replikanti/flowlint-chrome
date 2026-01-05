@@ -43,8 +43,8 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
       }
     };
 
-    window.addEventListener('mousedown', handleClickOutside);
-    return () => window.removeEventListener('mousedown', handleClickOutside);
+    globalThis.addEventListener('mousedown', handleClickOutside);
+    return () => globalThis.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
   const toggleEnabled = () => {
@@ -95,37 +95,43 @@ export const SettingsDropdown = ({ direction = 'down' }: SettingsDropdownProps) 
             <h3 className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100 px-2">Settings</h3>
           </div>
           <div className="p-1 space-y-1">
-            <button
-              role="checkbox"
-              aria-checked={enabled}
-              aria-label="Enable analysis"
-              onClick={toggleEnabled}
-              className="w-full flex items-center justify-between px-2 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded cursor-pointer transition-colors"
-            >
+            <label className="w-full flex items-center justify-between px-2 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded cursor-pointer transition-colors">
               <span>Enable analysis</span>
-              <div className={cn(
-                "w-4 h-4 border rounded flex items-center justify-center transition-all duration-200",
-                enabled ? "bg-brand-600 border-brand-600 text-white" : "border-zinc-300 dark:border-zinc-600 bg-transparent"
-              )}>
-                <Check className={cn("w-3 h-3 transition-transform duration-200", enabled ? "scale-100" : "scale-0")} />
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={enabled}
+                  onChange={toggleEnabled}
+                  className="sr-only"
+                  aria-label="Enable analysis"
+                />
+                <div className={cn(
+                  "w-4 h-4 border rounded flex items-center justify-center transition-all duration-200",
+                  enabled ? "bg-brand-600 border-brand-600 text-white" : "border-zinc-300 dark:border-zinc-600 bg-transparent"
+                )}>
+                  <Check className={cn("w-3 h-3 transition-transform duration-200", enabled ? "scale-100" : "scale-0")} />
+                </div>
               </div>
-            </button>
+            </label>
 
-            <button
-              role="checkbox"
-              aria-checked={autoAnalyze}
-              aria-label="Auto-analyze clipboard"
-              onClick={toggleAutoAnalyze}
-              className="w-full flex items-center justify-between px-2 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded cursor-pointer transition-colors"
-            >
+            <label className="w-full flex items-center justify-between px-2 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded cursor-pointer transition-colors">
               <span>Auto-analyze paste</span>
-              <div className={cn(
-                "w-4 h-4 border rounded flex items-center justify-center transition-all duration-200",
-                autoAnalyze ? "bg-brand-600 border-brand-600 text-white" : "border-zinc-300 dark:border-zinc-600 bg-transparent"
-              )}>
-                <Check className={cn("w-3 h-3 transition-transform duration-200", autoAnalyze ? "scale-100" : "scale-0")} />
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={autoAnalyze}
+                  onChange={toggleAutoAnalyze}
+                  className="sr-only"
+                  aria-label="Auto-analyze clipboard"
+                />
+                <div className={cn(
+                  "w-4 h-4 border rounded flex items-center justify-center transition-all duration-200",
+                  autoAnalyze ? "bg-brand-600 border-brand-600 text-white" : "border-zinc-300 dark:border-zinc-600 bg-transparent"
+                )}>
+                  <Check className={cn("w-3 h-3 transition-transform duration-200", autoAnalyze ? "scale-100" : "scale-0")} />
+                </div>
               </div>
-            </button>
+            </label>
 
             <div className="px-2 pt-2 pb-1 border-t border-zinc-100 dark:border-zinc-800">
               <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-2">Theme</span>

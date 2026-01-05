@@ -30,7 +30,7 @@ export const WidgetButton = ({
           !enabled && "muted"
         )}
         aria-label="Open FlowLint"
-        title={!enabled ? "FlowLint paused - click settings to enable" : "Open FlowLint"}
+        title={enabled ? "Open FlowLint" : "FlowLint paused - click settings to enable"}
       >
         <img src={chrome.runtime.getURL('icon-32.png')} className="w-8 h-8 rounded" alt="FlowLint Logo" />
       </button>
