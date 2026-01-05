@@ -378,6 +378,7 @@ export const Widget = () => {
           allFindings={results || []}
           filters={filters}
           counts={counts}
+          enabledRules={enabledRules}
           onClose={() => setIsExpandedView(false)}
           onToggleFilter={toggleFilter}
         />

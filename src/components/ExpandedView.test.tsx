@@ -29,14 +29,16 @@ describe('ExpandedView', () => {
   const mockCounts = { must: 1, should: 0, nit: 0 };
   const mockOnClose = vi.fn();
   const mockOnToggleFilter = vi.fn();
+  const mockEnabledRules = { R1: true, R2: true };
 
   it('renders title and content', () => {
     render(
-      <ExpandedView 
+      <ExpandedView
         findings={mockFindings}
         allFindings={mockFindings}
         filters={mockFilters}
         counts={mockCounts}
+        enabledRules={mockEnabledRules}
         onClose={mockOnClose}
         onToggleFilter={mockOnToggleFilter}
       />
@@ -54,6 +56,7 @@ describe('ExpandedView', () => {
         allFindings={mockFindings}
         filters={mockFilters}
         counts={mockCounts}
+        enabledRules={mockEnabledRules}
         onClose={mockOnClose}
         onToggleFilter={mockOnToggleFilter}
       />
@@ -73,6 +76,7 @@ describe('ExpandedView', () => {
         allFindings={mockFindings}
         filters={mockFilters}
         counts={mockCounts}
+        enabledRules={mockEnabledRules}
         onClose={mockOnClose}
         onToggleFilter={mockOnToggleFilter}
       />
@@ -81,6 +85,24 @@ describe('ExpandedView', () => {
     // Backdrop is the clickable overlay div
     const backdrop = screen.getByTestId('expanded-view-backdrop');
     fireEvent.click(backdrop);
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it('calls onClose when Escape key pressed', () => {
+    mockOnClose.mockClear();
+    render(
+      <ExpandedView
+        findings={mockFindings}
+        allFindings={mockFindings}
+        filters={mockFilters}
+        counts={mockCounts}
+        enabledRules={mockEnabledRules}
+        onClose={mockOnClose}
+        onToggleFilter={mockOnToggleFilter}
+      />
+    );
+
+    fireEvent.keyDown(window, { key: 'Escape' });
     expect(mockOnClose).toHaveBeenCalled();
   });
 });

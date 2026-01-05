@@ -1,15 +1,18 @@
+import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import type { Finding } from '@replikanti/flowlint-core';
 import { FilterBar } from './FilterBar';
 import { FindingsList } from './FindingsList';
 import { ExportPanel } from './ExportPanel';
 import { SettingsDropdown } from './SettingsDropdown';
+import { RulesWarning } from './RulesWarning';
 
 interface ExpandedViewProps {
   findings: Finding[];
   allFindings: Finding[];
   filters: { must: boolean; should: boolean; nit: boolean };
   counts: { must: number; should: number; nit: number };
+  enabledRules: Record<string, boolean>;
   onClose: () => void;
   onToggleFilter: (type: 'must' | 'should' | 'nit') => void;
 }
@@ -19,9 +22,21 @@ export const ExpandedView = ({
   allFindings,
   filters,
   counts,
+  enabledRules,
   onClose,
   onToggleFilter
 }: ExpandedViewProps) => {
+  // Global Escape key handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    globalThis.addEventListener('keydown', handleKeyDown);
+    return () => globalThis.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   const handleBackdropClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -58,6 +73,7 @@ export const ExpandedView = ({
               </h1>
            </div>
            <div className="flex items-center gap-1">
+              <RulesWarning enabledRules={enabledRules} />
               <SettingsDropdown direction="down" />
               <div className="w-[1px] h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
               <button 
