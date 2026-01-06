@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.2](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.15.1...flowlint-chrome-v0.15.2) (2026-01-05)
+
+
+### Bug Fixes
+
+* **quality:** resolve SonarQube code smells ([64c2130](https://github.com/Replikanti/flowlint-chrome/commit/64c21308ad4df6c6fbbd2f04f2d3a65a8ff569c3))
+
 ## [0.15.1](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.15.0...flowlint-chrome-v0.15.1) (2026-01-05)
 
 
