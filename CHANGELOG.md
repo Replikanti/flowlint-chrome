@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.4](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.15.3...flowlint-chrome-v0.15.4) (2026-01-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @replikanti/flowlint-core to ^0.11.0 ([#167](https://github.com/Replikanti/flowlint-chrome/issues/167)) ([4e84aef](https://github.com/Replikanti/flowlint-chrome/commit/4e84aef427b1230ab544eb6ed8877b0a4abcf515))
+
 ## [0.15.3](https://github.com/Replikanti/flowlint-chrome/compare/flowlint-chrome-v0.15.2...flowlint-chrome-v0.15.3) (2026-01-22)
 
 
