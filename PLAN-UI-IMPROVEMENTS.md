@@ -220,7 +220,7 @@ Expanded:   [⚙] [_] [▣] [×]   (settings, minimize, contract, close)
 4. Clicking toggles visibility of that severity
 5. Show count on each chip: `MUST (3)` `SHOULD (5)` `NIT (2)`
 6. **Persist filter state** in `chrome.storage.local` (survives browser restart)
-7. Optional future: Add rule filter dropdown (R1-R14)
+7. Optional future: Add rule filter dropdown (R1-R15)
 
 **Files to modify:**
 - `src/components/Widget.tsx`
