@@ -37,7 +37,7 @@
         "@types/react": "19.2.18",
         "@types/react-dom": "19.2.7",
         "@vitejs/plugin-react": "6.1.1",
-        "@vitest/coverage-v8": "4.1.11",
+        "@vitest/coverage-v8": "5.0.0",
         "autoprefixer": "10.5.5",
         "jsdom": "30.0.1",
         "openai": "7.10.0",
@@ -45,6 +45,6 @@
         "tailwindcss": "4.3.3",
         "typescript": "5.9.3",
         "vite": "8.2.2",
-        "vitest": "4.1.11"
+        "vitest": "5.0.0"
     }
 }
