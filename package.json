@@ -40,7 +40,7 @@
         "@vitest/coverage-v8": "5.1.0",
         "autoprefixer": "10.6.2",
         "jsdom": "31.0.1",
-        "openai": "7.57.0",
+        "openai": "7.59.0",
         "postcss": "8.5.33",
         "tailwindcss": "4.3.3",
         "typescript": "5.9.3",
